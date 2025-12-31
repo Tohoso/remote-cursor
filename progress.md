@@ -71,9 +71,9 @@ When completed:
 | Task | Track | Description | Status | Dependencies |
 |:---|:---|:---|:---:|:---|
 | TASK-015 | mobile-app | ナビゲーションのセットアップ | ✅ Done | TASK-014 |
-| TASK-016 | mobile-app | トラック詳細画面の実装 | ⚪ Ready | TASK-015 |
-| TASK-017 | mobile-app | ブロッカー詳細画面の実装 | ⚪ Ready | TASK-015 |
-| TASK-018 | mobile-app | アクティビティログ画面の実装 | ⚪ Ready | TASK-015 |
+| TASK-016 | mobile-app | トラック詳細画面の実装 | ✅ Done | TASK-015 |
+| TASK-017 | mobile-app | ブロッカー詳細画面の実装 | ✅ Done | TASK-015 |
+| TASK-018 | mobile-app | アクティビティログ画面の実装 | ✅ Done | TASK-015 |
 
 ### Phase 4: Real-time & Polish (EPIC-10 ~ EPIC-12)
 
@@ -171,6 +171,18 @@ When completed:
 #### TASK-015: ナビゲーションのセットアップ ✅
 - **Completed**: 2025-01-01
 - **Summary**: Set up React Navigation with StackNavigator architecture. Created navigation/types.ts with RootStackParamList type definitions. Implemented three placeholder screens (TrackDetailScreen, BlockerDetailScreen, ActivityLogScreen) for TASK-016, 017, 018. Updated App.tsx to use nested navigation structure (Stack > MainTabs). Updated TrackCard and BlockerAlert components with actual navigation using useNavigation hook. Installed @react-navigation/native-stack package. TypeScript compilation verified successfully.
+
+#### TASK-016: トラック詳細画面の実装 ✅
+- **Completed**: 2025-01-01
+- **Summary**: Implemented TrackDetailScreen with full functionality. Created TrackInfoCard component displaying track name, status, agent, and progress bar. Created TaskTimelineItem component with timeline visualization using status icons and colored connectors. Created TaskTimeline component listing all tasks with timeline layout. Screen reads from dashboardStore and displays track not found state when needed. All components use theme.ts for consistent styling.
+
+#### TASK-017: ブロッカー詳細画面の実装 ✅
+- **Completed**: 2025-01-01
+- **Summary**: Implemented BlockerDetailScreen with blocker management. Created BlockerCard component showing blocker ID, reason, impacted tasks, and detected date. Created ResolveBlockerForm component with TextInput and send button for instruction submission. Integrated WebSocket to emit instruction events. Screen displays all blockers or specific blocker based on route params. Shows empty state with success icon when no blockers exist. All components use theme.ts styling.
+
+#### TASK-018: アクティビティログ画面の実装 ✅
+- **Completed**: 2025-01-01
+- **Summary**: Implemented ActivityLogScreen with real-time log display. Created FilterChips component with horizontal scrolling filter tabs (all, system, websocket, claude-1, claude-2). Created LogEntry component with level-based colors and icons, source icons, and timestamp formatting. Implemented FlatList with performance optimizations (removeClippedSubviews, maxToRenderPerBatch, windowSize). Screen filters logs based on active filter and displays count. Shows empty state when no logs exist.
 
 ---
 
