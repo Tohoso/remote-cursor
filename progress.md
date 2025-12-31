@@ -80,7 +80,7 @@ When completed:
 | Task | Track | Description | Status | Dependencies |
 |:---|:---|:---|:---:|:---|
 | TASK-019 | server | WebSocket通信の強化（サーバー） | ✅ Done | TASK-011 |
-| TASK-019-CLIENT | mobile-app | WebSocket通信の強化（クライアント） | ⚪ Ready | TASK-012, TASK-019 |
+| TASK-019-CLIENT | mobile-app | WebSocket通信の強化（クライアント） | ✅ Done | TASK-012, TASK-019 |
 | TASK-020 | mobile-app | プッシュ通知の実装 | ⚪ Ready | TASK-019 |
 | TASK-021 | all | ドキュメントとクリーンアップ | ⚪ Ready | TASK-016, TASK-017, TASK-018 |
 
@@ -163,6 +163,10 @@ When completed:
 #### TASK-014: 新規ダッシュボードコンポーネントの実装 ✅
 - **Completed**: 2025-01-01
 - **Summary**: Fully implemented dashboard components. ProgressSummaryCard now features animated circular progress chart with task counts. TrackCard displays first 3 tasks with status icons and navigation placeholder. BlockerAlert implemented with enhanced styling. Installed react-native-circular-progress library. All components use theme.ts for consistent styling.
+
+#### TASK-019-CLIENT: WebSocket通信の強化（クライアント） ✅
+- **Completed**: 2025-01-01
+- **Summary**: Implemented client-side handlers for granular WebSocket events. Added updateTask, addBlocker, resolveBlocker actions to dashboardStore with immutable state updates and automatic progress recalculation. Added task_update and blocker_alert event handlers in useWebSocket with automatic log generation. UI now updates efficiently with incremental changes instead of full reloads.
 
 ---
 
