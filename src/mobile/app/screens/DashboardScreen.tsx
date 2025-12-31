@@ -1,79 +1,44 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import { StatusIndicator } from '../../components/dashboard/StatusIndicator';
 import { ProjectCard } from '../../components/dashboard/ProjectCard';
 import { LogEntry } from '../../components/dashboard/LogEntry';
 import { useWebSocket } from '../../hooks/useWebSocket';
-import { useDashboardStore } from '../../stores/dashboardStore';
+import { useDashboardStore, useTracks, useOverallProgress } from '../../stores/dashboardStore';
+import { Project } from '../../data/mockData';
 
 export const DashboardScreen = () => {
-  const { socket, connectionStatus } = useWebSocket();
-  const { projects, logs, setProjects, updateProject, addLog, setLogs } = useDashboardStore();
+  // Initialize WebSocket connection (handles all event subscriptions internally)
+  useWebSocket();
 
-  useEffect(() => {
-    if (!socket) return;
+  // Get data from store using selectors
+  const tracks = useTracks();
+  const overallProgress = useOverallProgress();
+  const { connectionStatus, logs } = useDashboardStore();
 
-    // Listen for project status updates
-    socket.on('project_status', (data) => {
-      console.log('Received project_status:', data);
-      // Server sends { type: 'project_status', data: ProjectStatus, timestamp: string }
-      if (data && data.data) {
-        const status = data.data;
-        // Map overallStatus to valid status type
-        const statusMap: Record<string, 'running' | 'idle' | 'error'> = {
-          'On Track': 'running',
-          'In Progress': 'running',
-          'Blocked': 'error',
-          'Unknown': 'idle',
-        };
-        // Convert ProjectStatus to Project array for display
-        const projectFromStatus = {
-          id: 'remote-cursor',
-          name: 'Remote Cursor',
-          currentTask: status.tracks?.[0]?.currentTask || 'Monitoring progress',
-          agent: status.tracks?.[0]?.owner || 'Claude Code',
-          status: statusMap[status.overallStatus] || 'idle',
-          progress: status.totalTasks > 0 
-            ? Math.round((status.completedTasks / status.totalTasks) * 100) 
-            : 0,
-        };
-        setProjects([projectFromStatus]);
-        
-        // Add a log entry for the update
-        const now = new Date();
-        const timeStr = now.toTimeString().split(' ')[0];
-        addLog({
-          id: `log-${Date.now()}`,
-          timestamp: timeStr,
-          level: 'info',
-          message: `Progress updated: ${status.completedTasks}/${status.totalTasks} tasks completed`,
-        });
-      } else if (Array.isArray(data)) {
-        setProjects(data);
-      } else {
-        updateProject(data);
-      }
-    });
-
-    // Listen for log updates
-    socket.on('log_update', (log) => {
-      addLog(log);
-    });
-
-    // Listen for initial logs
-    socket.on('initial_logs', (initialLogs) => {
-      setLogs(initialLogs);
-    });
-
-    // Request initial data
-    socket.emit('get_status');
-
-    return () => {
-      socket.off('project_status');
-      socket.off('log_update');
-      socket.off('initial_logs');
+  // Map Track data to legacy Project format for existing components
+  // This will be refactored in TASK-013 when Dashboard UI is rebuilt
+  const projects: Project[] = tracks.map((track) => {
+    const statusMap: Record<string, 'running' | 'idle' | 'error'> = {
+      'active': 'running',
+      'paused': 'idle',
+      'completed': 'idle',
     };
-  }, [socket, setProjects, updateProject, addLog, setLogs]);
+
+    // Find current task (first in_progress or not_started task)
+    const currentTask = track.tasks.find(
+      (task) => task.status === 'in_progress' || task.status === 'not_started'
+    );
+
+    return {
+      id: track.id,
+      name: track.name,
+      currentTask: currentTask?.title || 'No active task',
+      agent: track.agent,
+      status: statusMap[track.status] || 'idle',
+      progress: track.progress,
+    };
+  });
 
   return (
     <View className="flex-1 bg-[#1a1a2e]">
@@ -86,10 +51,23 @@ export const DashboardScreen = () => {
           <StatusIndicator status={connectionStatus} />
         </View>
 
+        {/* Overall Progress */}
+        {overallProgress.total > 0 && (
+          <View className="mb-6 bg-[#16213e] rounded-lg p-4">
+            <Text className="text-white text-sm mb-2">Overall Progress</Text>
+            <Text className="text-white text-lg font-bold">
+              {overallProgress.completed} / {overallProgress.total} tasks completed
+            </Text>
+            <Text className="text-gray-400 text-sm mt-1">
+              Status: {overallProgress.status}
+            </Text>
+          </View>
+        )}
+
         {/* Project Cards Section */}
         <View className="mb-6">
           <Text className="text-white text-lg font-semibold mb-3">
-            Active Projects
+            Active Tracks
           </Text>
           {projects.length > 0 ? (
             projects.map((project) => (
@@ -98,7 +76,7 @@ export const DashboardScreen = () => {
           ) : (
             <Text className="text-gray-500 text-center py-4">
               {connectionStatus === 'connected'
-                ? 'No active projects'
+                ? 'No active tracks'
                 : 'Connecting to server...'}
             </Text>
           )}
@@ -112,7 +90,15 @@ export const DashboardScreen = () => {
           <View className="bg-[#16213e] rounded-lg p-3">
             {logs.length > 0 ? (
               logs.map((log) => (
-                <LogEntry key={log.id} log={log} />
+                <LogEntry
+                  key={log.id}
+                  log={{
+                    id: log.id,
+                    timestamp: new Date(log.timestamp).toTimeString().split(' ')[0],
+                    level: log.level === 'warning' ? 'warn' : log.level as 'info' | 'error',
+                    message: log.message,
+                  }}
+                />
               ))
             ) : (
               <Text className="text-gray-500 text-center py-2">
