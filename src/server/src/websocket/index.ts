@@ -1,5 +1,6 @@
 import { Server as HttpServer } from 'http';
 import { WebSocketServer, WebSocket } from 'ws';
+import { ProjectStatus } from '../services/progressParser';
 
 export function setupWebSocket(server: HttpServer): WebSocketServer {
   const wss = new WebSocketServer({ server });
@@ -44,4 +45,28 @@ export function setupWebSocket(server: HttpServer): WebSocketServer {
 
   console.log('WebSocket server initialized');
   return wss;
+}
+
+/**
+ * Broadcast project status to all connected clients
+ */
+export function broadcastProjectStatus(
+  wss: WebSocketServer,
+  status: ProjectStatus
+): void {
+  const message = JSON.stringify({
+    type: 'project_status',
+    data: status,
+    timestamp: new Date().toISOString(),
+  });
+
+  let clientCount = 0;
+  wss.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(message);
+      clientCount++;
+    }
+  });
+
+  console.log(`Broadcasted project status to ${clientCount} client(s)`);
 }

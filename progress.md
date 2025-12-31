@@ -5,7 +5,7 @@
 | Track | Owner | Current Task | Branch | Status |
 |-------|-------|--------------|--------|--------|
 | **Mobile App** | Claude-1 | TASK-004: WebSocket integration | `feature/mobile/task-004-websocket` | ⚪ Ready |
-| **PC Server** | Claude-2 | TASK-006: File watcher | `feature/server/task-006-filewatcher` | ⚪ Ready |
+| **PC Server** | Claude-2 | TASK-006: File watcher | `feature/server/task-006-file-watcher` | ✅ Completed |
 
 **Orchestrator**: Manus  
 **Last Updated**: 2025-01-01
@@ -21,7 +21,7 @@
 | TASK-003 | Mobile | Dashboard screen | ✅ Done | TASK-002 |
 | TASK-004 | Mobile | WebSocket integration | ⚪ Ready | TASK-003, TASK-005 |
 | TASK-005 | Server | Initialize Node.js server | ✅ Done | - |
-| TASK-006 | Server | File watcher & emitter | ⚪ Ready | TASK-005 |
+| TASK-006 | Server | File watcher & emitter | ✅ Done | TASK-005 |
 | TASK-007 | Mobile | Instruction input screen | ⚪ Ready | TASK-004 |
 | TASK-008 | Server | Instruction handler | ⚪ Ready | TASK-006 |
 | TASK-009 | Both | Final integration & E2E | ⏳ Blocked | TASK-004,006,007,008 |
@@ -46,9 +46,9 @@
 
 ### Completed Tasks
 - [x] TASK-005: Initialize Node.js server with Express and WebSocket
+- [x] TASK-006: File watcher & project status emitter
 
 ### Pending Tasks
-- [ ] TASK-006: File watcher & project status emitter ⚪
 - [ ] TASK-008: Instruction handler & task file creation ⚪
 - [ ] TASK-009: Final integration & E2E testing ⏳
 
@@ -63,9 +63,9 @@ Phase 1 (Foundation) - COMPLETED ✅
 ├── TASK-003: Dashboard UI ✅
 └── TASK-005: Init Server ✅
 
-Phase 2 (Real-time Communication) - READY TO START
+Phase 2 (Real-time Communication) - IN PROGRESS
 ├── TASK-004: WebSocket Client (Mobile) ⚪ ← Claude-1 START HERE
-└── TASK-006: File Watcher + Emitter (Server) ⚪ ← Claude-2 START HERE
+└── TASK-006: File Watcher + Emitter (Server) ✅ COMPLETED
 
 Phase 3 (Instruction Flow) - PENDING
 ├── TASK-007: Instruction Screen (Mobile) ⚪
@@ -99,6 +99,11 @@ Phase 4 (Integration) - BLOCKED
 - **Completed**: 2024-12-31
 - **PR**: #3 (Merged)
 - **Summary**: Express + WebSocket server, TypeScript, CORS configured
+
+### TASK-006: File watcher & project status emitter ✅
+- **Completed**: 2025-01-01
+- **PR**: TBD
+- **Summary**: Implemented chokidar-based file watcher for progress.md, progress parser service to extract project status, WebSocket broadcast system to emit real-time project status updates to connected clients
 
 ---
 
