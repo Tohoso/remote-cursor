@@ -1,6 +1,7 @@
 import chokidar, { FSWatcher } from 'chokidar';
 import path from 'path';
-import { ProgressParser, ProjectStatus } from './progressParser';
+import { ProjectStatus } from '@common/types';
+import { ProgressParser } from './progressParser';
 
 export type StatusChangeCallback = (status: ProjectStatus) => void;
 

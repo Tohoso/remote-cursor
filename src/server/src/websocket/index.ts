@@ -80,7 +80,7 @@ export function setupWebSocket(
     });
 
     // Handle disconnection
-    socket.on('disconnect', (reason) => {
+    socket.on('disconnect', (reason: string) => {
       console.log('Socket.IO connection closed:', socket.id, 'Reason:', reason);
     });
 
