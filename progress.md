@@ -4,74 +4,101 @@
 
 | Track | Owner | Current Task | Branch | Status |
 |-------|-------|--------------|--------|--------|
-| **Mobile App** | Claude-1 | TASK-002: Bottom navigation | `feature/mobile/task-002-navigation` | 🟡 In Progress |
-| **PC Server** | Claude-2 | TASK-005: Init server | `feature/server/task-005-init-server` | ⚪ Ready to Start |
+| **Mobile App** | Claude-1 | TASK-004: WebSocket integration | `feature/mobile/task-004-websocket` | ⚪ Ready |
+| **PC Server** | Claude-2 | TASK-006: File watcher | `feature/server/task-006-filewatcher` | ⚪ Ready |
 
 **Orchestrator**: Manus  
-**Last Updated**: 2024-12-31
+**Last Updated**: 2025-01-01
+
+---
+
+## Task Overview
+
+| Task | Track | Description | Status | Dependencies |
+|------|-------|-------------|--------|--------------|
+| TASK-001 | Mobile | Initialize Expo project | ✅ Done | - |
+| TASK-002 | Mobile | Bottom navigation | ✅ Done | TASK-001 |
+| TASK-003 | Mobile | Dashboard screen | ✅ Done | TASK-002 |
+| TASK-004 | Mobile | WebSocket integration | ⚪ Ready | TASK-003, TASK-005 |
+| TASK-005 | Server | Initialize Node.js server | ✅ Done | - |
+| TASK-006 | Server | File watcher & emitter | ⚪ Ready | TASK-005 |
+| TASK-007 | Mobile | Instruction input screen | ⚪ Ready | TASK-004 |
+| TASK-008 | Server | Instruction handler | ⚪ Ready | TASK-006 |
+| TASK-009 | Both | Final integration & E2E | ⏳ Blocked | TASK-004,006,007,008 |
 
 ---
 
 ## Mobile App Timeline (Owner: Claude-1)
 
-### Phase 1: Mobile App Foundation
+### Completed Tasks
 - [x] TASK-001: Initialize Expo project and setup base structure
-- [ ] TASK-002: Implement bottom navigation and screen routing
-- [ ] TASK-003: Create Dashboard screen with mock data
-- [ ] TASK-004: Implement Settings screen with connection management UI
+- [x] TASK-002: Implement bottom navigation and screen routing
+- [x] TASK-003: Create Dashboard screen with mock data
 
-### Phase 3: Mobile-Server Integration (depends on PC Server)
-- [ ] TASK-009: Connect mobile app to PC server via WebSocket
-- [ ] TASK-010: Implement real-time dashboard updates
-- [ ] TASK-011: Create instruction input and task submission flow
-- [ ] TASK-012: Implement push notifications
-
-### Phase 4: Advanced Features
-- [ ] TASK-013: Integrate code-server WebView
-- [ ] TASK-014: Implement WebRTC screen sharing
-- [ ] TASK-015: Add Tailscale connection management
+### Pending Tasks
+- [ ] TASK-004: WebSocket integration & real-time dashboard ⚪
+- [ ] TASK-007: Instruction input screen ⚪
+- [ ] TASK-009: Final integration & E2E testing ⏳
 
 ---
 
 ## PC Server Timeline (Owner: Claude-2)
 
-### Phase 2: PC Agent Server Development
-- [ ] TASK-005: Initialize Node.js server with Express and WebSocket
-- [ ] TASK-006: Implement file system watcher for progress.md
-- [ ] TASK-007: Create REST API for task management
-- [ ] TASK-008: Implement real-time log streaming via WebSocket
+### Completed Tasks
+- [x] TASK-005: Initialize Node.js server with Express and WebSocket
+
+### Pending Tasks
+- [ ] TASK-006: File watcher & project status emitter ⚪
+- [ ] TASK-008: Instruction handler & task file creation ⚪
+- [ ] TASK-009: Final integration & E2E testing ⏳
 
 ---
 
-## Shared Timeline
+## Task Dependency Graph
 
-### Phase 5: Testing & Polish
-- [ ] TASK-016: Write unit tests
-- [ ] TASK-017: Write E2E tests
-- [ ] TASK-018: UI polish and performance optimization
-- [ ] TASK-019: Documentation and deployment guide
+```
+Phase 1 (Foundation) - COMPLETED ✅
+├── TASK-001: Init Expo ✅
+├── TASK-002: Navigation ✅
+├── TASK-003: Dashboard UI ✅
+└── TASK-005: Init Server ✅
+
+Phase 2 (Real-time Communication) - READY TO START
+├── TASK-004: WebSocket Client (Mobile) ⚪ ← Claude-1 START HERE
+└── TASK-006: File Watcher + Emitter (Server) ⚪ ← Claude-2 START HERE
+
+Phase 3 (Instruction Flow) - PENDING
+├── TASK-007: Instruction Screen (Mobile) ⚪
+└── TASK-008: Instruction Handler (Server) ⚪
+
+Phase 4 (Integration) - BLOCKED
+└── TASK-009: Final Integration & E2E ⏳
+    └── Depends on: TASK-004, 006, 007, 008
+```
 
 ---
 
-## Completed Tasks
+## Completed Task Details
 
-### TASK-001: Initialize Expo project and setup base structure ✅
+### TASK-001: Initialize Expo project ✅
 - **Completed**: 2024-12-31
-- **Completed by**: Claude-1 (Claude Code)
-- **Track**: Mobile App
-- **Summary**:
-  - Created src/mobile directory structure
-  - Initialized Expo project with TypeScript template
-  - Installed core dependencies (nativewind, react-navigation packages)
-  - Configured NativeWind with tailwind.config.js and babel.config.js
-  - Created welcome screen with "Welcome to Remote Cursor" message
-  - Verified app runs successfully with `npx expo start`
+- **PR**: #1 (Merged)
+- **Summary**: Created Expo project with TypeScript, NativeWind configured
 
----
+### TASK-002: Bottom navigation ✅
+- **Completed**: 2024-12-31
+- **PR**: #2 (Merged)
+- **Summary**: 4-tab navigation (Dashboard, Terminal, ScreenShare, Settings)
 
-## Blockers & Issues
+### TASK-003: Dashboard screen ✅
+- **Completed**: 2024-12-31
+- **PR**: #4 (Merged)
+- **Summary**: Project status cards, log viewer with mock data, dark theme
 
-(None currently)
+### TASK-005: Initialize Node.js server ✅
+- **Completed**: 2024-12-31
+- **PR**: #3 (Merged)
+- **Summary**: Express + WebSocket server, TypeScript, CORS configured
 
 ---
 
@@ -103,7 +130,20 @@
 | 2024-12-31 | Use Expo for mobile development | Cross-platform support, rapid development | Manus |
 | 2024-12-31 | Use Tailscale for secure networking | Easy setup, P2P encryption, MagicDNS | Manus |
 | 2024-12-31 | Hybrid architecture approach | Balance between full functionality and mobile optimization | Manus |
-| 2024-12-31 | **Parallel development with 2 tracks** | Increase development velocity | Manus |
+| 2024-12-31 | Parallel development with 2 tracks | Increase development velocity | Manus |
+| 2025-01-01 | Autonomous Git Worktree management | Eliminate human error in branch management | Manus |
+
+---
+
+## Legend
+
+| Symbol | Meaning |
+|--------|---------|
+| ✅ | Completed |
+| 🟡 | In Progress |
+| ⚪ | Ready to Start |
+| ⏳ | Blocked / Waiting |
+| 🔴 | Error / Needs Attention |
 
 ---
 
