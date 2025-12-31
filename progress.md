@@ -55,9 +55,9 @@ When completed:
 
 | Task | Track | Description | Status | Dependencies |
 |:---|:---|:---|:---:|:---|
-| TASK-010 | common | 共有データモデルの定義 | ⚪ Ready | - |
-| TASK-011 | server | サーバーサイドパーサーの強化 | ⚪ Ready | TASK-010 |
-| TASK-012 | mobile-app | モバイルアプリ状態管理の刷新 | ⚪ Ready | TASK-010 |
+| TASK-010 | common | 共有データモデルの定義 | 🟡 In Progress | - |
+| TASK-011 | server | サーバーサイドパーサーの強化 | ⏳ Blocked | TASK-010 |
+| TASK-012 | mobile-app | モバイルアプリ状態管理の刷新 | ⏳ Blocked | TASK-010 |
 
 ### Phase 2: Dashboard UI (EPIC-04 ~ EPIC-05)
 
