@@ -1,7 +1,12 @@
 import { createServer } from 'http';
 import path from 'path';
 import { createApp } from './app';
-import { setupWebSocket, broadcastProjectStatus } from './websocket';
+import {
+  setupWebSocket,
+  broadcastProjectStatus,
+  broadcastTaskUpdate,
+  broadcastBlockerAlert,
+} from './websocket';
 import { InstructionHandler } from './services/instructionHandler';
 import { FileWatcher } from './services/fileWatcher';
 import config from './config';
@@ -21,13 +26,54 @@ const io = setupWebSocket(server, instructionHandler);
 
 // Setup File Watcher for progress.md
 const fileWatcher = new FileWatcher(projectRoot);
-fileWatcher.start((status) => {
-  console.log('Progress file changed, broadcasting update...');
-  broadcastProjectStatus(io, {
-    type: 'project_status',
-    data: status,
-    timestamp: new Date().toISOString(),
-  });
+fileWatcher.start((status, diff) => {
+  console.log('Progress file changed, broadcasting updates...');
+  const timestamp = new Date().toISOString();
+
+  // Always broadcast full project_status for major changes or initial connection
+  if (diff.majorChange) {
+    console.log('Major change detected, broadcasting full project_status');
+    broadcastProjectStatus(io, {
+      type: 'project_status',
+      data: status,
+      timestamp,
+    });
+  }
+
+  // Broadcast individual task updates
+  if (diff.taskUpdates.length > 0) {
+    console.log(`Broadcasting ${diff.taskUpdates.length} task update(s)`);
+    diff.taskUpdates.forEach((task) => {
+      broadcastTaskUpdate(io, {
+        type: 'task_update',
+        data: task,
+        timestamp,
+      });
+    });
+  }
+
+  // Broadcast new blocker alerts
+  if (diff.newBlockers.length > 0) {
+    console.log(`Broadcasting ${diff.newBlockers.length} blocker alert(s)`);
+    diff.newBlockers.forEach((blocker) => {
+      broadcastBlockerAlert(io, {
+        type: 'blocker_alert',
+        data: blocker,
+        timestamp,
+      });
+    });
+  }
+
+  // If no major change and no incremental updates, still send project_status
+  // This handles edge cases where the structure didn't change but we want to notify
+  if (!diff.majorChange && diff.taskUpdates.length === 0 && diff.newBlockers.length === 0) {
+    console.log('Minor change without specific updates, broadcasting project_status');
+    broadcastProjectStatus(io, {
+      type: 'project_status',
+      data: status,
+      timestamp,
+    });
+  }
 });
 
 // Start server

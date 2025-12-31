@@ -178,3 +178,20 @@ export interface DashboardState {
   connectionStatus: ConnectionStatus;
   logs: ActivityLogEntry[];
 }
+
+/**
+ * Represents the changes detected between two ProjectStatus states
+ * Used for incremental WebSocket updates (task_update, blocker_alert events)
+ *
+ * @see API_SPECIFICATION.md Section 3.2
+ */
+export interface ProjectStatusDiff {
+  /** Tasks that have changed status or properties */
+  taskUpdates: Task[];
+  /** Newly detected blockers */
+  newBlockers: Blocker[];
+  /** Blocker IDs that were resolved */
+  resolvedBlockers: string[];
+  /** Whether there was a major structural change requiring full update */
+  majorChange: boolean;
+}

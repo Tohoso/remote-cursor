@@ -1,9 +1,9 @@
 import chokidar, { FSWatcher } from 'chokidar';
 import path from 'path';
-import { ProjectStatus } from '@common/types';
+import { ProjectStatus, ProjectStatusDiff } from '@common/types';
 import { ProgressParser } from './progressParser';
 
-export type StatusChangeCallback = (status: ProjectStatus) => void;
+export type StatusChangeCallback = (status: ProjectStatus, diff: ProjectStatusDiff) => void;
 
 export class FileWatcher {
   private watcher: FSWatcher | null = null;
@@ -70,9 +70,10 @@ export class FileWatcher {
   private handleChange(): void {
     try {
       const status = this.parser.parseProgress();
+      const diff = this.parser.calculateDiff(status);
 
       if (this.callback) {
-        this.callback(status);
+        this.callback(status, diff);
       }
     } catch (error) {
       console.error('Error handling file change:', error);
