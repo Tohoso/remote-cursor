@@ -1,5 +1,8 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../navigation/types';
 import { colors, typography } from '../../theme';
 
 interface BlockerAlertProps {
@@ -13,11 +16,11 @@ interface BlockerAlertProps {
  * Implemented in TASK-014.
  */
 export const BlockerAlert: React.FC<BlockerAlertProps> = ({ count }) => {
-  // Navigate to blocker detail (placeholder until TASK-017)
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+  // Navigate to blocker detail
   const handlePress = () => {
-    console.log('Navigate to BlockerDetail, count:', count);
-    // TODO: TASK-017 - Implement navigation to BlockerDetailScreen
-    // navigation.navigate('BlockerDetail');
+    navigation.navigate('BlockerDetail', {});
   };
 
   return (

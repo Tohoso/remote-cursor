@@ -70,7 +70,7 @@ When completed:
 
 | Task | Track | Description | Status | Dependencies |
 |:---|:---|:---|:---:|:---|
-| TASK-015 | mobile-app | ナビゲーションのセットアップ | ⚪ Ready | TASK-014 |
+| TASK-015 | mobile-app | ナビゲーションのセットアップ | ✅ Done | TASK-014 |
 | TASK-016 | mobile-app | トラック詳細画面の実装 | ⚪ Ready | TASK-015 |
 | TASK-017 | mobile-app | ブロッカー詳細画面の実装 | ⚪ Ready | TASK-015 |
 | TASK-018 | mobile-app | アクティビティログ画面の実装 | ⚪ Ready | TASK-015 |
@@ -167,6 +167,10 @@ When completed:
 #### TASK-019-CLIENT: WebSocket通信の強化（クライアント） ✅
 - **Completed**: 2025-01-01
 - **Summary**: Implemented client-side handlers for granular WebSocket events. Added updateTask, addBlocker, resolveBlocker actions to dashboardStore with immutable state updates and automatic progress recalculation. Added task_update and blocker_alert event handlers in useWebSocket with automatic log generation. UI now updates efficiently with incremental changes instead of full reloads.
+
+#### TASK-015: ナビゲーションのセットアップ ✅
+- **Completed**: 2025-01-01
+- **Summary**: Set up React Navigation with StackNavigator architecture. Created navigation/types.ts with RootStackParamList type definitions. Implemented three placeholder screens (TrackDetailScreen, BlockerDetailScreen, ActivityLogScreen) for TASK-016, 017, 018. Updated App.tsx to use nested navigation structure (Stack > MainTabs). Updated TrackCard and BlockerAlert components with actual navigation using useNavigation hook. Installed @react-navigation/native-stack package. TypeScript compilation verified successfully.
 
 ---
 

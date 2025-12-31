@@ -1,6 +1,9 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Track, TaskStatus } from '@common/types';
+import { RootStackParamList } from '../../navigation/types';
 import { colors, typography } from '../../theme';
 
 interface TrackCardProps {
@@ -41,11 +44,11 @@ export const TrackCard: React.FC<TrackCardProps> = ({ track }) => {
     }
   };
 
-  // Navigate to track detail (placeholder until TASK-016)
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+  // Navigate to track detail
   const handlePress = () => {
-    console.log('Navigate to TrackDetail:', track.id);
-    // TODO: TASK-016 - Implement navigation to TrackDetailScreen
-    // navigation.navigate('TrackDetail', { trackId: track.id });
+    navigation.navigate('TrackDetail', { trackId: track.id });
   };
 
   // Get first 3 tasks for preview
