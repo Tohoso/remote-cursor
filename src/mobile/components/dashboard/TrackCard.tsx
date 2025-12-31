@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Track } from '@common/types';
+import { Track, TaskStatus } from '@common/types';
 import { colors, typography } from '../../theme';
 
 interface TrackCardProps {
@@ -10,8 +10,8 @@ interface TrackCardProps {
 /**
  * Track Card Component
  *
- * Displays summary information for a single development track.
- * TODO: TASK-014 - Implement progress bar, task preview list, and navigation to detail screen
+ * Displays summary information for a single development track with task preview.
+ * Implemented in TASK-014.
  */
 export const TrackCard: React.FC<TrackCardProps> = ({ track }) => {
   const statusColors = {
@@ -26,6 +26,31 @@ export const TrackCard: React.FC<TrackCardProps> = ({ track }) => {
     completed: '完了',
   };
 
+  // Get status icon for task
+  const getStatusIcon = (status: TaskStatus) => {
+    switch (status) {
+      case 'done':
+        return '✅';
+      case 'in_progress':
+        return '🟡';
+      case 'blocked':
+        return '🔴';
+      case 'not_started':
+      default:
+        return '⚪';
+    }
+  };
+
+  // Navigate to track detail (placeholder until TASK-016)
+  const handlePress = () => {
+    console.log('Navigate to TrackDetail:', track.id);
+    // TODO: TASK-016 - Implement navigation to TrackDetailScreen
+    // navigation.navigate('TrackDetail', { trackId: track.id });
+  };
+
+  // Get first 3 tasks for preview
+  const previewTasks = track.tasks.slice(0, 3);
+
   return (
     <TouchableOpacity
       style={{
@@ -34,11 +59,19 @@ export const TrackCard: React.FC<TrackCardProps> = ({ track }) => {
         padding: 16,
         marginBottom: 12,
       }}
+      onPress={handlePress}
       activeOpacity={0.7}
     >
       {/* Track Header */}
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-        <Text style={{ ...typography.h2 }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 12,
+        }}
+      >
+        <Text style={{ ...typography.h2, flex: 1 }}>
           {track.name}
         </Text>
         <View
@@ -49,18 +82,24 @@ export const TrackCard: React.FC<TrackCardProps> = ({ track }) => {
             borderRadius: 12,
           }}
         >
-          <Text style={{ ...typography.caption, color: colors.background }}>
+          <Text style={{ ...typography.caption, color: colors.background, fontWeight: '600' }}>
             {statusLabels[track.status]}
           </Text>
         </View>
       </View>
 
       {/* Track Info */}
-      <Text style={{ ...typography.label, color: colors.secondaryText, marginBottom: 8 }}>
+      <Text
+        style={{
+          ...typography.label,
+          color: colors.secondaryText,
+          marginBottom: 12,
+        }}
+      >
         担当: {track.agent}
       </Text>
 
-      {/* Progress Bar - Placeholder */}
+      {/* Progress Bar */}
       <View style={{ marginBottom: 12 }}>
         <View
           style={{
@@ -78,12 +117,85 @@ export const TrackCard: React.FC<TrackCardProps> = ({ track }) => {
             }}
           />
         </View>
-        <Text style={{ ...typography.caption, color: colors.secondaryText, marginTop: 4 }}>
-          {track.completedTasks} / {track.totalTasks} タスク完了
+        <Text
+          style={{
+            ...typography.caption,
+            color: colors.secondaryText,
+            marginTop: 4,
+          }}
+        >
+          {track.completedTasks} / {track.totalTasks} タスク完了 ({track.progress}%)
         </Text>
       </View>
 
-      {/* TODO: Add task preview list */}
+      {/* Task Preview List */}
+      {previewTasks.length > 0 && (
+        <View
+          style={{
+            marginTop: 8,
+            paddingTop: 12,
+            borderTopWidth: 1,
+            borderTopColor: colors.border,
+          }}
+        >
+          <Text
+            style={{
+              ...typography.label,
+              color: colors.secondaryText,
+              marginBottom: 8,
+            }}
+          >
+            最近のタスク
+          </Text>
+          {previewTasks.map((task) => (
+            <View
+              key={task.id}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingVertical: 6,
+              }}
+            >
+              <Text style={{ fontSize: 16, marginRight: 8 }}>
+                {getStatusIcon(task.status)}
+              </Text>
+              <Text
+                style={{
+                  ...typography.mono,
+                  color: colors.accent,
+                  marginRight: 8,
+                  fontSize: 12,
+                }}
+              >
+                {task.id}
+              </Text>
+              <Text
+                style={{
+                  ...typography.body,
+                  color: colors.primaryText,
+                  flex: 1,
+                  fontSize: 14,
+                }}
+                numberOfLines={1}
+              >
+                {task.title}
+              </Text>
+            </View>
+          ))}
+          {track.tasks.length > 3 && (
+            <Text
+              style={{
+                ...typography.caption,
+                color: colors.accent,
+                marginTop: 4,
+                textAlign: 'right',
+              }}
+            >
+              他{track.tasks.length - 3}件のタスク →
+            </Text>
+          )}
+        </View>
+      )}
     </TouchableOpacity>
   );
 };

@@ -64,7 +64,7 @@ When completed:
 | Task | Track | Description | Status | Dependencies |
 |:---|:---|:---|:---:|:---|
 | TASK-013 | mobile-app | ダッシュボード画面の再構築 | ✅ Done | TASK-012 |
-| TASK-014 | mobile-app | 新規ダッシュボードコンポーネントの実装 | ⚪ Ready | TASK-013 |
+| TASK-014 | mobile-app | 新規ダッシュボードコンポーネントの実装 | ✅ Done | TASK-013 |
 
 ### Phase 3: New Screens (EPIC-06 ~ EPIC-09)
 
@@ -159,6 +159,10 @@ When completed:
 #### TASK-013: ダッシュボード画面の再構築 ✅
 - **Completed**: 2025-01-01
 - **Summary**: Rebuilt DashboardScreen with new component structure. Created placeholder components (Header, ProgressSummaryCard, TrackCard, BlockerAlert) using theme.ts styling. Removed legacy ProjectCard and LogEntry components. Implemented loading state and conditional blocker alert rendering.
+
+#### TASK-014: 新規ダッシュボードコンポーネントの実装 ✅
+- **Completed**: 2025-01-01
+- **Summary**: Fully implemented dashboard components. ProgressSummaryCard now features animated circular progress chart with task counts. TrackCard displays first 3 tasks with status icons and navigation placeholder. BlockerAlert implemented with enhanced styling. Installed react-native-circular-progress library. All components use theme.ts for consistent styling.
 
 ---
 
