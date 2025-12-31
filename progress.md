@@ -151,6 +151,51 @@ Phase 4 (Integration) - BLOCKED
 
 ---
 
+---
+
+## Sprint 2: UI/UX Overhaul
+
+**Goal**: Implement the ideal UI/UX defined in wireframes for progress.md monitoring feature.
+
+### Phase 1: Foundation (EPIC-01 ~ EPIC-03)
+
+| Task | Track | Description | Status | Dependencies |
+|:---|:---|:---|:---|:---|
+| TASK-010 | common | 共有データモデルの定義 | ⚪ Ready | - |
+| TASK-011 | server | サーバーサイドパーサーの強化 | ⚪ Ready | TASK-010 |
+| TASK-012 | mobile-app | モバイルアプリ状態管理の刷新 | ⚪ Ready | TASK-010 |
+
+### Phase 2: Dashboard UI (EPIC-04 ~ EPIC-05)
+
+| Task | Track | Description | Status | Dependencies |
+|:---|:---|:---|:---|:---|
+| TASK-013 | mobile-app | ダッシュボード画面の再構築 | ⚪ Ready | TASK-012 |
+| TASK-014 | mobile-app | 新規ダッシュボードコンポーネントの実装 | ⚪ Ready | TASK-013 |
+
+### Phase 3: New Screens (EPIC-06 ~ EPIC-09)
+
+| Task | Track | Description | Status | Dependencies |
+|:---|:---|:---|:---|:---|
+| TASK-015 | mobile-app | ナビゲーションのセットアップ | ⚪ Ready | TASK-014 |
+| TASK-016 | mobile-app | トラック詳細画面の実装 | ⚪ Ready | TASK-015 |
+| TASK-017 | mobile-app | ブロッカー詳細画面の実装 | ⚪ Ready | TASK-015 |
+| TASK-018 | mobile-app | アクティビティログ画面の実装 | ⚪ Ready | TASK-015 |
+
+### Phase 4: Real-time & Polish (EPIC-10 ~ EPIC-12)
+
+| Task | Track | Description | Status | Dependencies |
+|:---|:---|:---|:---|:---|
+| TASK-019 | server, mobile-app | WebSocket通信の強化 | ⚪ Ready | TASK-011, TASK-012 |
+| TASK-020 | mobile-app | プッシュ通知の実装 | ⚪ Ready | TASK-019 |
+| TASK-021 | all | ドキュメントとクリーンアップ | ⚪ Ready | TASK-016, TASK-017, TASK-018 |
+
+**Reference Documents**:
+- [Implementation Plan](docs/implementation/IMPLEMENTATION_PLAN.md)
+- [Wireframe Spec](docs/implementation/WIREFRAME_SPEC.md)
+- [Gap Analysis](docs/implementation/GAP_ANALYSIS.md)
+
+---
+
 ## Notes
 
 - This project uses the **Manus × Claude Code collaboration workflow**
