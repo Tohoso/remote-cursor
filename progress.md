@@ -5,10 +5,10 @@
 | Track | Owner | Current Task | Branch | Status |
 |-------|-------|--------------|--------|--------|
 | **Mobile App** | Claude-1 | TASK-002: Bottom navigation | `feature/mobile/task-002-navigation` | 🟡 In Progress |
-| **PC Server** | Claude-2 | TASK-005: Init server | `feature/server/task-005-init-server` | ⚪ Ready to Start |
+| **PC Server** | Claude-2 | TASK-005: Init server | `feature/server/task-005-init-server` | 🟢 Completed |
 
-**Orchestrator**: Manus  
-**Last Updated**: 2024-12-31
+**Orchestrator**: Manus
+**Last Updated**: 2025-12-31
 
 ---
 
@@ -36,7 +36,7 @@
 ## PC Server Timeline (Owner: Claude-2)
 
 ### Phase 2: PC Agent Server Development
-- [ ] TASK-005: Initialize Node.js server with Express and WebSocket
+- [x] TASK-005: Initialize Node.js server with Express and WebSocket
 - [ ] TASK-006: Implement file system watcher for progress.md
 - [ ] TASK-007: Create REST API for task management
 - [ ] TASK-008: Implement real-time log streaming via WebSocket
@@ -54,6 +54,22 @@
 ---
 
 ## Completed Tasks
+
+### TASK-005: Initialize Node.js server with Express and WebSocket ✅
+- **Completed**: 2025-12-31
+- **Completed by**: Claude-2 (Claude Code)
+- **Track**: PC Server
+- **Summary**:
+  - Created src/server directory structure
+  - Initialized Node.js project with TypeScript
+  - Installed dependencies (express, ws, cors, dotenv, typescript)
+  - Configured TypeScript with strict mode
+  - Implemented Express app with CORS and request logging
+  - Created health check endpoint (GET /api/health)
+  - Implemented WebSocket server with connection handling
+  - Created configuration system with environment variables
+  - Verified server runs successfully with `npm run dev`
+  - Tested HTTP and WebSocket endpoints
 
 ### TASK-001: Initialize Expo project and setup base structure ✅
 - **Completed**: 2024-12-31
