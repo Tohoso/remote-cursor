@@ -63,7 +63,7 @@ When completed:
 
 | Task | Track | Description | Status | Dependencies |
 |:---|:---|:---|:---:|:---|
-| TASK-013 | mobile-app | ダッシュボード画面の再構築 | 🟡 In Progress | TASK-012 |
+| TASK-013 | mobile-app | ダッシュボード画面の再構築 | ✅ Done | TASK-012 |
 | TASK-014 | mobile-app | 新規ダッシュボードコンポーネントの実装 | ⚪ Ready | TASK-013 |
 
 ### Phase 3: New Screens (EPIC-06 ~ EPIC-09)
@@ -156,6 +156,9 @@ When completed:
 #### TASK-019: WebSocket通信の強化 ✅
 - **Completed**: 2025-01-01
 - **Summary**: Enhanced WebSocket communication with incremental updates. [Server] Added diff detection to progressParser with ProjectStatusDiff type. Implemented task_update and blocker_alert events. Created 7 comprehensive unit tests. All 19 tests passing with excellent coverage.
+#### TASK-013: ダッシュボード画面の再構築 ✅
+- **Completed**: 2025-01-01
+- **Summary**: Rebuilt DashboardScreen with new component structure. Created placeholder components (Header, ProgressSummaryCard, TrackCard, BlockerAlert) using theme.ts styling. Removed legacy ProjectCard and LogEntry components. Implemented loading state and conditional blocker alert rendering.
 
 ---
 
