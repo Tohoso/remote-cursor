@@ -206,3 +206,101 @@ When encountering the following situations, delegate to the appropriate subagent
 - **ALWAYS create PR automatically after pushing** - do not wait for instructions
 - Ask for clarification rather than making assumptions
 - Prioritize security, especially for network communication
+
+
+---
+
+## Sprint 2: UI/UX Overhaul
+
+**Goal**: Implement the ideal UI/UX defined in wireframes for the progress.md monitoring feature.
+
+### Required Reading Before Starting
+
+Before starting any Sprint 2 task, you MUST read and understand the following documents:
+
+| Document | Path | Purpose |
+|:---|:---|:---|
+| **Implementation Plan** | `docs/implementation/IMPLEMENTATION_PLAN.md` | Overall plan with 4 phases and 12 EPICs |
+| **API Specification** | `docs/design/API_SPECIFICATION.md` | WebSocket events and REST endpoints |
+| **Data Model** | `docs/design/DATA_MODEL.md` | Type definitions and validation rules |
+| **Component Design** | `docs/design/COMPONENT_DESIGN.md` | UI component hierarchy and props |
+| **State Management** | `docs/design/STATE_MANAGEMENT.md` | Zustand store design |
+| **Test Plan** | `docs/testing/TEST_PLAN.md` | Test strategy and coverage goals |
+| **Wireframe Spec** | `docs/implementation/WIREFRAME_SPEC.md` | Visual UI/UX specifications |
+
+### Sprint 2 Task Execution Rules
+
+1. **Read the task file first**: Each task is in `tasks/TASK-XXX-EPIC-YY-*.md`
+2. **Check dependencies**: Do not start a task until its dependencies are marked `✅ Done` in `progress.md`
+3. **Follow the design documents**: Implementation must match the specifications in the design documents
+4. **Update progress.md**: After completing each task, update the status in `progress.md`
+5. **Write tests**: Follow the Test Plan - aim for 80% code coverage
+
+### Sprint 2 Directory Structure
+
+```
+src/
+├── common/                    # Shared code between mobile and server
+│   └── types.ts               # Shared type definitions (TASK-010)
+├── mobile/
+│   ├── app/
+│   │   └── screens/           # Screen components (Templates)
+│   ├── components/
+│   │   ├── common/            # Atoms (Button, Card, etc.)
+│   │   ├── dashboard/         # Dashboard-specific components
+│   │   ├── track/             # Track detail components
+│   │   ├── blocker/           # Blocker detail components
+│   │   └── activity/          # Activity log components
+│   ├── stores/                # Zustand stores
+│   └── hooks/                 # Custom hooks (useWebSocket, etc.)
+└── server/
+    └── src/
+        └── services/          # progressParser, fileWatcher, etc.
+```
+
+### Sprint 2 Task Dependencies
+
+```
+TASK-010 (Shared Types)
+    ├──► TASK-011 (Parser Enhancement) ──► TASK-019 (WebSocket Enhancement)
+    └──► TASK-012 (State Management) ──► TASK-013 (Dashboard Rebuild)
+                                              └──► TASK-014 (Dashboard Components)
+                                                    └──► TASK-015 (Navigation)
+                                                          ├──► TASK-016 (Track Detail)
+                                                          ├──► TASK-017 (Blocker Detail)
+                                                          └──► TASK-018 (Activity Log)
+                                                                └──► TASK-021 (Documentation)
+TASK-019 ──► TASK-020 (Push Notifications)
+```
+
+### progress.md Update Format
+
+When updating `progress.md`, use the following status indicators:
+
+| Status | Symbol | Meaning |
+|:---|:---|:---|
+| Not Started | `⚪ Ready` | Task is ready to be started |
+| In Progress | `🟡 In Progress` | Task is currently being worked on |
+| Completed | `✅ Done` | Task is completed and merged |
+| Blocked | `⏳ Blocked` | Task is waiting for dependencies |
+
+**Example update:**
+```markdown
+| TASK-010 | common | 共有データモデルの定義 | 🟡 In Progress | - |
+```
+
+After completing a task:
+```markdown
+| TASK-010 | common | 共有データモデルの定義 | ✅ Done | - |
+```
+
+### Starting Point for Sprint 2
+
+**Start with TASK-010** (Shared Types). This task has no dependencies and provides the foundation for all other tasks.
+
+1. Read `tasks/TASK-010-EPIC-01-SHARED-TYPES.md`
+2. Read `docs/design/DATA_MODEL.md` for type specifications
+3. Implement types in `src/common/types.ts`
+4. Write unit tests
+5. Update `progress.md`
+6. Create PR
