@@ -1,113 +1,76 @@
 import React from 'react';
 import { View, Text, ScrollView } from 'react-native';
-import { StatusIndicator } from '../../components/dashboard/StatusIndicator';
-import { ProjectCard } from '../../components/dashboard/ProjectCard';
-import { LogEntry } from '../../components/dashboard/LogEntry';
 import { useWebSocket } from '../../hooks/useWebSocket';
-import { useDashboardStore, useTracks, useOverallProgress } from '../../stores/dashboardStore';
-import { Project } from '../../data/mockData';
+import { useDashboardStore } from '../../stores/dashboardStore';
+import { colors } from '../../theme';
 
+// Import new dashboard components
+import { Header } from '../../components/dashboard/Header';
+import { ProgressSummaryCard } from '../../components/dashboard/ProgressSummaryCard';
+import { TrackCard } from '../../components/dashboard/TrackCard';
+import { BlockerAlert } from '../../components/dashboard/BlockerAlert';
+
+/**
+ * Dashboard Screen - Main App Screen
+ *
+ * Displays project overview with tracks, blockers, and overall progress.
+ * Refactored in TASK-013 to use new component structure.
+ */
 export const DashboardScreen = () => {
   // Initialize WebSocket connection (handles all event subscriptions internally)
   useWebSocket();
 
-  // Get data from store using selectors
-  const tracks = useTracks();
-  const overallProgress = useOverallProgress();
-  const { connectionStatus, logs } = useDashboardStore();
+  // Get data from store
+  const { projectStatus, connectionStatus } = useDashboardStore();
 
-  // Map Track data to legacy Project format for existing components
-  // This will be refactored in TASK-013 when Dashboard UI is rebuilt
-  const projects: Project[] = tracks.map((track) => {
-    const statusMap: Record<string, 'running' | 'idle' | 'error'> = {
-      'active': 'running',
-      'paused': 'idle',
-      'completed': 'idle',
-    };
-
-    // Find current task (first in_progress or not_started task)
-    const currentTask = track.tasks.find(
-      (task) => task.status === 'in_progress' || task.status === 'not_started'
+  // Loading state
+  if (!projectStatus) {
+    return (
+      <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={{ color: colors.primaryText, fontSize: 18 }}>
+          読み込み中...
+        </Text>
+        <Text style={{ color: colors.secondaryText, fontSize: 14, marginTop: 8 }}>
+          サーバーに接続しています
+        </Text>
+      </View>
     );
-
-    return {
-      id: track.id,
-      name: track.name,
-      currentTask: currentTask?.title || 'No active task',
-      agent: track.agent,
-      status: statusMap[track.status] || 'idle',
-      progress: track.progress,
-    };
-  });
+  }
 
   return (
-    <View className="flex-1 bg-[#1a1a2e]">
-      <ScrollView className="flex-1 px-4 pt-4">
-        {/* Header Section */}
-        <View className="mb-6">
-          <Text className="text-white text-2xl font-bold mb-2">
-            Remote Cursor
-          </Text>
-          <StatusIndicator status={connectionStatus} />
-        </View>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingTop: 16 }}>
+        {/* Header with connection status */}
+        <Header
+          connectionStatus={connectionStatus}
+          lastUpdated={projectStatus.lastUpdated}
+        />
 
-        {/* Overall Progress */}
-        {overallProgress.total > 0 && (
-          <View className="mb-6 bg-[#16213e] rounded-lg p-4">
-            <Text className="text-white text-sm mb-2">Overall Progress</Text>
-            <Text className="text-white text-lg font-bold">
-              {overallProgress.completed} / {overallProgress.total} tasks completed
-            </Text>
-            <Text className="text-gray-400 text-sm mt-1">
-              Status: {overallProgress.status}
-            </Text>
-          </View>
+        {/* Overall Progress Summary */}
+        <ProgressSummaryCard
+          completed={projectStatus.completedTasks}
+          total={projectStatus.totalTasks}
+        />
+
+        {/* Blocker Alert (only shown if blockers exist) */}
+        {projectStatus.blockers.length > 0 && (
+          <BlockerAlert count={projectStatus.blockers.length} />
         )}
 
-        {/* Project Cards Section */}
-        <View className="mb-6">
-          <Text className="text-white text-lg font-semibold mb-3">
-            Active Tracks
+        {/* Tracks Section */}
+        <View style={{ marginTop: 8, marginBottom: 24 }}>
+          <Text style={{ color: colors.primaryText, fontSize: 20, fontWeight: '600', marginBottom: 12 }}>
+            トラック
           </Text>
-          {projects.length > 0 ? (
-            projects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
+          {projectStatus.tracks.length > 0 ? (
+            projectStatus.tracks.map((track) => (
+              <TrackCard key={track.id} track={track} />
             ))
           ) : (
-            <Text className="text-gray-500 text-center py-4">
-              {connectionStatus === 'connected'
-                ? 'No active tracks'
-                : 'Connecting to server...'}
+            <Text style={{ color: colors.secondaryText, textAlign: 'center', paddingVertical: 32 }}>
+              トラックがありません
             </Text>
           )}
-        </View>
-
-        {/* Real-time Log Section */}
-        <View className="mb-4">
-          <Text className="text-white text-lg font-semibold mb-3">
-            Real-time Logs
-          </Text>
-          <View className="bg-[#16213e] rounded-lg p-3">
-            {logs.length > 0 ? (
-              logs.map((log) => (
-                <LogEntry
-                  key={log.id}
-                  log={{
-                    id: log.id,
-                    timestamp: new Date(log.timestamp).toTimeString().split(' ')[0],
-                    level: log.level === 'warning' ? 'warn' : log.level as 'info' | 'error',
-                    message: log.message,
-                  }}
-                />
-              ))
-            ) : (
-              <Text className="text-gray-500 text-center py-2">
-                {connectionStatus === 'connected'
-                  ? 'No logs yet'
-                  : 'Waiting for connection...'}
-              </Text>
-            )}
-          </View>
         </View>
       </ScrollView>
     </View>

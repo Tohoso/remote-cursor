@@ -63,7 +63,7 @@ When completed:
 
 | Task | Track | Description | Status | Dependencies |
 |:---|:---|:---|:---:|:---|
-| TASK-013 | mobile-app | ダッシュボード画面の再構築 | 🟡 In Progress | TASK-012 |
+| TASK-013 | mobile-app | ダッシュボード画面の再構築 | ✅ Done | TASK-012 |
 | TASK-014 | mobile-app | 新規ダッシュボードコンポーネントの実装 | ⚪ Ready | TASK-013 |
 
 ### Phase 3: New Screens (EPIC-06 ~ EPIC-09)
@@ -151,6 +151,10 @@ When completed:
 #### TASK-012: モバイルアプリ状態管理の刷新 ✅
 - **Completed**: 2025-01-01
 - **Summary**: Refactored Zustand store to use new data model from @common/types. Implemented ProjectStatus-based state management with selectors (useTracks, useBlockers, useOverallProgress).
+
+#### TASK-013: ダッシュボード画面の再構築 ✅
+- **Completed**: 2025-01-01
+- **Summary**: Rebuilt DashboardScreen with new component structure. Created placeholder components (Header, ProgressSummaryCard, TrackCard, BlockerAlert) using theme.ts styling. Removed legacy ProjectCard and LogEntry components. Implemented loading state and conditional blocker alert rendering.
 
 ---
 
