@@ -81,7 +81,7 @@ When completed:
 |:---|:---|:---|:---:|:---|
 | TASK-019 | server | WebSocket通信の強化（サーバー） | ✅ Done | TASK-011 |
 | TASK-019-CLIENT | mobile-app | WebSocket通信の強化（クライアント） | ✅ Done | TASK-012, TASK-019 |
-| TASK-020 | mobile-app + server | プッシュ通知の実装 | 🟡 In Progress | TASK-019 |
+| TASK-020 | mobile-app + server | プッシュ通知の実装 | ✅ Done | TASK-019 |
 | TASK-021 | all | ドキュメントとクリーンアップ | ⚪ Ready | TASK-016, TASK-017, TASK-018 |
 
 **Reference Documents**:
@@ -92,7 +92,6 @@ When completed:
 ---
 
 ## Previous Sprint: Sprint 1 - Core Infrastructure (Completed ✅)
-
 | Task | Track | Description | Status | Dependencies |
 |:---|:---|:---|:---:|:---|
 | TASK-001 | mobile-app | Initialize Expo project | ✅ Done | - |
@@ -173,6 +172,7 @@ When completed:
 - **Summary**: Set up React Navigation with StackNavigator architecture. Created navigation/types.ts with RootStackParamList type definitions. Implemented three placeholder screens (TrackDetailScreen, BlockerDetailScreen, ActivityLogScreen) for TASK-016, 017, 018. Updated App.tsx to use nested navigation structure (Stack > MainTabs). Updated TrackCard and BlockerAlert components with actual navigation using useNavigation hook. Installed @react-navigation/native-stack package. TypeScript compilation verified successfully.
 
 #### TASK-016: トラック詳細画面の実装 ✅
+
 - **Completed**: 2025-01-01
 - **Summary**: Implemented TrackDetailScreen with full functionality. Created TrackInfoCard component displaying track name, status, agent, and progress bar. Created TaskTimelineItem component with timeline visualization using status icons and colored connectors. Created TaskTimeline component listing all tasks with timeline layout. Screen reads from dashboardStore and displays track not found state when needed. All components use theme.ts for consistent styling.
 
@@ -184,9 +184,11 @@ When completed:
 - **Completed**: 2025-01-01
 - **Summary**: Implemented ActivityLogScreen with real-time log display. Created FilterChips component with horizontal scrolling filter tabs (all, system, websocket, claude-1, claude-2). Created LogEntry component with level-based colors and icons, source icons, and timestamp formatting. Implemented FlatList with performance optimizations (removeClippedSubviews, maxToRenderPerBatch, windowSize). Screen filters logs based on active filter and displays count. Shows empty state when no logs exist.
 
-#### TASK-020: プッシュ通知の実装 (Client-side) 🟡
-- **Completed**: 2025-01-01 (Client-side only)
-- **Summary**: Implemented client-side push notification support using Expo Notifications. Created usePushNotifications hook with notification permission request, Expo push token registration, and notification listeners. Integrated push notifications in App.tsx to send push token to server via WebSocket. Added notification handlers for received and tapped notifications. Installed expo-notifications, expo-device, and expo-constants packages. Server-side implementation (TASK-020 server) is pending.
+#### TASK-020: プッシュ通知の実装 ✅
+- **Completed**: 2025-01-01
+- **Summary**: Implemented full push notification support for blocker alerts and task updates.
+  - **Client-side (mobile-app)**: Created usePushNotifications hook with Expo Notifications. Implemented permission request, push token registration, and notification listeners. Integrated with App.tsx to register token via WebSocket. Added notification tap handlers for navigation. Installed expo-notifications, expo-device, and expo-constants packages.
+  - **Server-side (server)**: Created PushNotificationService class using expo-server-sdk. Implemented token registration/unregistration via WebSocket handlers (register_push_token, unregister_push_token). Added sendBlockerAlert() and sendTaskUpdateNotification() methods with chunked message sending and error handling. Integrated push notifications with blocker alert emission in index.ts to automatically send notifications when blockers are detected.
 
 ---
 

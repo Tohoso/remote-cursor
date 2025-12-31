@@ -9,6 +9,7 @@ import {
 } from './websocket';
 import { InstructionHandler } from './services/instructionHandler';
 import { FileWatcher } from './services/fileWatcher';
+import { pushNotificationService } from './services/pushNotificationService';
 import config from './config';
 
 // Create Express app
@@ -56,11 +57,32 @@ fileWatcher.start((status, diff) => {
   if (diff.newBlockers.length > 0) {
     console.log(`Broadcasting ${diff.newBlockers.length} blocker alert(s)`);
     diff.newBlockers.forEach((blocker) => {
+      // Broadcast WebSocket event
       broadcastBlockerAlert(io, {
         type: 'blocker_alert',
         data: blocker,
         timestamp,
       });
+
+      // Send push notification
+      // Find the track name by looking up the task
+      let trackName = 'Unknown';
+      if (blocker.taskId) {
+        for (const track of status.tracks) {
+          const task = track.tasks.find((t) => t.id === blocker.taskId);
+          if (task) {
+            trackName = track.name;
+            break;
+          }
+        }
+      }
+
+      // Send async push notification (fire and forget)
+      pushNotificationService
+        .sendBlockerAlert(blocker, trackName)
+        .catch((error) => {
+          console.error('[Push] Error sending blocker alert notification:', error);
+        });
     });
   }
 
