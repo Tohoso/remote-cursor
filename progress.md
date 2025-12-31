@@ -5,7 +5,7 @@
 | Track | Owner | Current Task | Branch | Status |
 |-------|-------|--------------|--------|--------|
 | **Mobile App** | Claude-1 | TASK-004: WebSocket integration | `feature/mobile/task-004-websocket-integration` | 🟡 In Progress |
-| **PC Server** | Claude-2 | TASK-006: File watcher | `feature/server/task-006-filewatcher` | ⚪ Ready |
+| **PC Server** | Claude-2 | TASK-008: Instruction handler | `feature/server/task-008-instruction-handler` | ✅ Completed |
 
 **Orchestrator**: Manus  
 **Last Updated**: 2025-01-01
@@ -23,7 +23,7 @@
 | TASK-005 | Server | Initialize Node.js server | ✅ Done | - |
 | TASK-006 | Server | File watcher & emitter | ⚪ Ready | TASK-005 |
 | TASK-007 | Mobile | Instruction input screen | ⚪ Ready | TASK-004 |
-| TASK-008 | Server | Instruction handler | ⚪ Ready | TASK-006 |
+| TASK-008 | Server | Instruction handler | ✅ Done | TASK-006 |
 | TASK-009 | Both | Final integration & E2E | ⏳ Blocked | TASK-004,006,007,008 |
 
 ---
@@ -48,10 +48,10 @@
 
 ### Completed Tasks
 - [x] TASK-005: Initialize Node.js server with Express and WebSocket
+- [x] TASK-008: Instruction handler & task file creation
 
 ### Pending Tasks
 - [ ] TASK-006: File watcher & project status emitter ⚪
-- [ ] TASK-008: Instruction handler & task file creation ⚪
 - [ ] TASK-009: Final integration & E2E testing ⏳
 
 ---
@@ -69,9 +69,9 @@ Phase 2 (Real-time Communication) - READY TO START
 ├── TASK-004: WebSocket Client (Mobile) ⚪ ← Claude-1 START HERE
 └── TASK-006: File Watcher + Emitter (Server) ⚪ ← Claude-2 START HERE
 
-Phase 3 (Instruction Flow) - PENDING
+Phase 3 (Instruction Flow) - IN PROGRESS
 ├── TASK-007: Instruction Screen (Mobile) ⚪
-└── TASK-008: Instruction Handler (Server) ⚪
+└── TASK-008: Instruction Handler (Server) ✅ COMPLETED
 
 Phase 4 (Integration) - BLOCKED
 └── TASK-009: Final Integration & E2E ⏳
@@ -101,6 +101,11 @@ Phase 4 (Integration) - BLOCKED
 - **Completed**: 2024-12-31
 - **PR**: #3 (Merged)
 - **Summary**: Express + WebSocket server, TypeScript, CORS configured
+
+### TASK-008: Instruction handler & task file creation ✅
+- **Completed**: 2025-01-01
+- **PR**: TBD
+- **Summary**: Implemented WebSocket instruction message handler, automatic task file generation in `tasks/` directory with `MANUS-REQUEST-{timestamp}.md` format, confirmation message to client, comprehensive validation and error handling
 
 ---
 
