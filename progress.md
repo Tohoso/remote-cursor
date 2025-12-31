@@ -82,7 +82,7 @@ When completed:
 | TASK-019 | server | WebSocket通信の強化（サーバー） | ✅ Done | TASK-011 |
 | TASK-019-CLIENT | mobile-app | WebSocket通信の強化（クライアント） | ✅ Done | TASK-012, TASK-019 |
 | TASK-020 | mobile-app + server | プッシュ通知の実装 | ✅ Done | TASK-019 |
-| TASK-021 | all | ドキュメントとクリーンアップ | ⚪ Ready | TASK-016, TASK-017, TASK-018 |
+| TASK-021 | mobile-app + server | ドキュメントとクリーンアップ | 🟡 In Progress | TASK-016, TASK-017, TASK-018 |
 
 **Reference Documents**:
 - [Implementation Plan](docs/implementation/IMPLEMENTATION_PLAN.md)
@@ -189,6 +189,12 @@ When completed:
 - **Summary**: Implemented full push notification support for blocker alerts and task updates.
   - **Client-side (mobile-app)**: Created usePushNotifications hook with Expo Notifications. Implemented permission request, push token registration, and notification listeners. Integrated with App.tsx to register token via WebSocket. Added notification tap handlers for navigation. Installed expo-notifications, expo-device, and expo-constants packages.
   - **Server-side (server)**: Created PushNotificationService class using expo-server-sdk. Implemented token registration/unregistration via WebSocket handlers (register_push_token, unregister_push_token). Added sendBlockerAlert() and sendTaskUpdateNotification() methods with chunked message sending and error handling. Integrated push notifications with blocker alert emission in index.ts to automatically send notifications when blockers are detected.
+
+#### TASK-021: ドキュメントとクリーンアップ (Client-side) 🟡
+- **Completed**: 2025-01-01 (Client-side only)
+- **Summary**: Cleaned up mobile app codebase and created comprehensive documentation.
+  - **Client-side (mobile-app)**: Created components/index.ts for organized component exports. Created detailed src/mobile/README.md documenting features, tech stack, directory structure, and development instructions. Updated project root README.md with comprehensive overview, architecture diagram, setup instructions, and troubleshooting guide. No unused components found to delete. All documentation written in Japanese and English mix for accessibility.
+  - **Server-side (server)**: Pending implementation.
 
 ---
 
