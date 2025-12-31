@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useDashboardStore } from '../stores/dashboardStore';
-import { ProjectStatus } from '@common/types';
+import { ProjectStatus, Task, Blocker } from '@common/types';
 
 // Use environment variable or fallback to public server URL
 // For local development: http://localhost:3001
@@ -10,7 +10,14 @@ const SOCKET_URL = process.env.EXPO_PUBLIC_SOCKET_URL || 'https://3001-iegsqpt4p
 
 export const useWebSocket = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
-  const { connectionStatus, setProjectStatus, setConnectionStatus, addLog } = useDashboardStore();
+  const {
+    connectionStatus,
+    setProjectStatus,
+    setConnectionStatus,
+    addLog,
+    updateTask,
+    addBlocker,
+  } = useDashboardStore();
 
   useEffect(() => {
     // Create socket connection
@@ -42,7 +49,7 @@ export const useWebSocket = () => {
       setConnectionStatus('connecting');
     });
 
-    // Handle project_status event
+    // Handle project_status event (major structural changes)
     newSocket.on('project_status', (data: any) => {
       console.log('Received project_status:', data);
 
@@ -62,6 +69,36 @@ export const useWebSocket = () => {
       }
     });
 
+    // TASK-019-CLIENT: Handle task_update event (individual task status change)
+    newSocket.on('task_update', (payload: { type: string; data: Task; timestamp: string }) => {
+      console.log('Received task_update:', payload);
+
+      updateTask(payload.data);
+
+      addLog({
+        id: `log-${Date.now()}`,
+        timestamp: payload.timestamp,
+        message: `タスク更新: ${payload.data.id} → ${payload.data.status}`,
+        level: 'info',
+        source: 'websocket',
+      });
+    });
+
+    // TASK-019-CLIENT: Handle blocker_alert event (new blocker detected)
+    newSocket.on('blocker_alert', (payload: { type: string; data: Blocker; timestamp: string }) => {
+      console.log('Received blocker_alert:', payload);
+
+      addBlocker(payload.data);
+
+      addLog({
+        id: `log-${Date.now()}`,
+        timestamp: payload.timestamp,
+        message: `⚠️ 新しいブロッカー: ${payload.data.reason}`,
+        level: 'warning',
+        source: 'websocket',
+      });
+    });
+
     setSocket(newSocket);
     setConnectionStatus('connecting');
 
@@ -69,7 +106,7 @@ export const useWebSocket = () => {
     return () => {
       newSocket.close();
     };
-  }, [setProjectStatus, setConnectionStatus, addLog]);
+  }, [setProjectStatus, setConnectionStatus, addLog, updateTask, addBlocker]);
 
   return { socket, connectionStatus };
 };

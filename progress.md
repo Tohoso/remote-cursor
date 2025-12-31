@@ -63,14 +63,14 @@ When completed:
 
 | Task | Track | Description | Status | Dependencies |
 |:---|:---|:---|:---:|:---|
-| TASK-013 | mobile-app | ダッシュボード画面の再構築 | 🟡 In Progress | TASK-012 |
-| TASK-014 | mobile-app | 新規ダッシュボードコンポーネントの実装 | ⚪ Ready | TASK-013 |
+| TASK-013 | mobile-app | ダッシュボード画面の再構築 | ✅ Done | TASK-012 |
+| TASK-014 | mobile-app | 新規ダッシュボードコンポーネントの実装 | ✅ Done | TASK-013 |
 
 ### Phase 3: New Screens (EPIC-06 ~ EPIC-09)
 
 | Task | Track | Description | Status | Dependencies |
 |:---|:---|:---|:---:|:---|
-| TASK-015 | mobile-app | ナビゲーションのセットアップ | ⚪ Ready | TASK-014 |
+| TASK-015 | mobile-app | ナビゲーションのセットアップ | ✅ Done | TASK-014 |
 | TASK-016 | mobile-app | トラック詳細画面の実装 | ⚪ Ready | TASK-015 |
 | TASK-017 | mobile-app | ブロッカー詳細画面の実装 | ⚪ Ready | TASK-015 |
 | TASK-018 | mobile-app | アクティビティログ画面の実装 | ⚪ Ready | TASK-015 |
@@ -79,7 +79,8 @@ When completed:
 
 | Task | Track | Description | Status | Dependencies |
 |:---|:---|:---|:---:|:---|
-| TASK-019 | server, mobile-app | WebSocket通信の強化 | ✅ Done | TASK-011, TASK-012 |
+| TASK-019 | server | WebSocket通信の強化（サーバー） | ✅ Done | TASK-011 |
+| TASK-019-CLIENT | mobile-app | WebSocket通信の強化（クライアント） | ✅ Done | TASK-012, TASK-019 |
 | TASK-020 | mobile-app | プッシュ通知の実装 | ⚪ Ready | TASK-019 |
 | TASK-021 | all | ドキュメントとクリーンアップ | ⚪ Ready | TASK-016, TASK-017, TASK-018 |
 
@@ -155,6 +156,21 @@ When completed:
 #### TASK-019: WebSocket通信の強化 ✅
 - **Completed**: 2025-01-01
 - **Summary**: Enhanced WebSocket communication with incremental updates. [Server] Added diff detection to progressParser with ProjectStatusDiff type. Implemented task_update and blocker_alert events. Created 7 comprehensive unit tests. All 19 tests passing with excellent coverage.
+#### TASK-013: ダッシュボード画面の再構築 ✅
+- **Completed**: 2025-01-01
+- **Summary**: Rebuilt DashboardScreen with new component structure. Created placeholder components (Header, ProgressSummaryCard, TrackCard, BlockerAlert) using theme.ts styling. Removed legacy ProjectCard and LogEntry components. Implemented loading state and conditional blocker alert rendering.
+
+#### TASK-014: 新規ダッシュボードコンポーネントの実装 ✅
+- **Completed**: 2025-01-01
+- **Summary**: Fully implemented dashboard components. ProgressSummaryCard now features animated circular progress chart with task counts. TrackCard displays first 3 tasks with status icons and navigation placeholder. BlockerAlert implemented with enhanced styling. Installed react-native-circular-progress library. All components use theme.ts for consistent styling.
+
+#### TASK-019-CLIENT: WebSocket通信の強化（クライアント） ✅
+- **Completed**: 2025-01-01
+- **Summary**: Implemented client-side handlers for granular WebSocket events. Added updateTask, addBlocker, resolveBlocker actions to dashboardStore with immutable state updates and automatic progress recalculation. Added task_update and blocker_alert event handlers in useWebSocket with automatic log generation. UI now updates efficiently with incremental changes instead of full reloads.
+
+#### TASK-015: ナビゲーションのセットアップ ✅
+- **Completed**: 2025-01-01
+- **Summary**: Set up React Navigation with StackNavigator architecture. Created navigation/types.ts with RootStackParamList type definitions. Implemented three placeholder screens (TrackDetailScreen, BlockerDetailScreen, ActivityLogScreen) for TASK-016, 017, 018. Updated App.tsx to use nested navigation structure (Stack > MainTabs). Updated TrackCard and BlockerAlert components with actual navigation using useNavigation hook. Installed @react-navigation/native-stack package. TypeScript compilation verified successfully.
 
 ---
 
