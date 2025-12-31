@@ -79,7 +79,7 @@ When completed:
 
 | Task | Track | Description | Status | Dependencies |
 |:---|:---|:---|:---:|:---|
-| TASK-019 | server, mobile-app | WebSocket通信の強化 | 🟡 In Progress | TASK-011, TASK-012 |
+| TASK-019 | server, mobile-app | WebSocket通信の強化 | ✅ Done | TASK-011, TASK-012 |
 | TASK-020 | mobile-app | プッシュ通知の実装 | ⚪ Ready | TASK-019 |
 | TASK-021 | all | ドキュメントとクリーンアップ | ⚪ Ready | TASK-016, TASK-017, TASK-018 |
 
@@ -151,6 +151,10 @@ When completed:
 #### TASK-012: モバイルアプリ状態管理の刷新 ✅
 - **Completed**: 2025-01-01
 - **Summary**: Refactored Zustand store to use new data model from @common/types. Implemented ProjectStatus-based state management with selectors (useTracks, useBlockers, useOverallProgress).
+
+#### TASK-019: WebSocket通信の強化 ✅
+- **Completed**: 2025-01-01
+- **Summary**: Enhanced WebSocket communication with incremental updates. [Server] Added diff detection to progressParser with ProjectStatusDiff type. Implemented task_update and blocker_alert events. Created 7 comprehensive unit tests. All 19 tests passing with excellent coverage.
 
 ---
 
