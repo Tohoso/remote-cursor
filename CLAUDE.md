@@ -29,10 +29,21 @@ remote-cursor/
 │   ├── design/               # Architecture and design docs
 │   └── mockups/              # UI mockups
 ├── tasks/                    # Task files for agent instructions
-└── src/                      # Source code (to be created)
-    ├── mobile/               # React Native mobile app
-    └── server/               # PC Agent Server
+└── src/                      # Source code
+    ├── mobile/               # React Native mobile app (Claude-1)
+    └── server/               # PC Agent Server (Claude-2)
 ```
+
+## Parallel Development
+
+This project uses **parallel development** with multiple Claude Code instances:
+
+| Track | Owner | Directory | Branch Prefix |
+|-------|-------|-----------|---------------|
+| Mobile App | Claude-1 | `src/mobile/` | `feature/mobile/` |
+| PC Server | Claude-2 | `src/server/` | `feature/server/` |
+
+**Important**: Only modify files within your assigned directory.
 
 ## Development Workflow
 
@@ -41,6 +52,49 @@ This project uses the **Manus × Claude Code Collaboration Workflow**:
 1. **Manus** acts as the orchestrator - handling research, planning, design, and review
 2. **Claude Code** handles implementation - coding, testing, and debugging
 3. Communication happens through `progress.md` and `tasks/` directory
+
+### Task Execution Flow (MUST FOLLOW)
+
+When you receive a task, follow this exact flow:
+
+```
+1. git checkout develop && git pull origin develop
+2. Read the task file in tasks/TASK-XXX-*.md
+3. Create feature branch: git checkout -b feature/{track}/task-XXX-description
+4. Implement the task
+5. Update progress.md (your track's section only)
+6. Commit changes with descriptive message
+7. Push branch: git push origin feature/{track}/task-XXX-description
+8. **AUTOMATICALLY CREATE PR** (see below)
+9. Notify user that PR is ready for review
+```
+
+### Automatic PR Creation (REQUIRED)
+
+**After pushing your feature branch, you MUST automatically create a Pull Request.**
+
+Use this command:
+
+```bash
+gh pr create --base develop --title "feat: {Task Title} (TASK-XXX)" --body "## Summary
+{Brief description of changes}
+
+## Changes Made
+- {Change 1}
+- {Change 2}
+
+## Acceptance Criteria
+- [ ] {Criterion 1}
+- [ ] {Criterion 2}
+
+## Related
+- Completes TASK-XXX: {Task Title}
+- Track: {Mobile App / PC Server}
+
+🤖 Generated with Claude Code"
+```
+
+**DO NOT wait for user instruction to create PR. Create it immediately after pushing.**
 
 ### Task File Format
 
@@ -108,5 +162,6 @@ When encountering the following situations, delegate to the appropriate subagent
 - Always check `progress.md` before starting work
 - Update `progress.md` after completing each phase
 - Create detailed commit messages
+- **ALWAYS create PR automatically after pushing** - do not wait for instructions
 - Ask for clarification rather than making assumptions
 - Prioritize security, especially for network communication
