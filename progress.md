@@ -81,7 +81,7 @@ When completed:
 |:---|:---|:---|:---:|:---|
 | TASK-019 | server | WebSocket通信の強化（サーバー） | ✅ Done | TASK-011 |
 | TASK-019-CLIENT | mobile-app | WebSocket通信の強化（クライアント） | ✅ Done | TASK-012, TASK-019 |
-| TASK-020 | mobile-app | プッシュ通知の実装 | ⚪ Ready | TASK-019 |
+| TASK-020 | mobile-app + server | プッシュ通知の実装 | 🟡 In Progress | TASK-019 |
 | TASK-021 | all | ドキュメントとクリーンアップ | ⚪ Ready | TASK-016, TASK-017, TASK-018 |
 
 **Reference Documents**:
@@ -183,6 +183,10 @@ When completed:
 #### TASK-018: アクティビティログ画面の実装 ✅
 - **Completed**: 2025-01-01
 - **Summary**: Implemented ActivityLogScreen with real-time log display. Created FilterChips component with horizontal scrolling filter tabs (all, system, websocket, claude-1, claude-2). Created LogEntry component with level-based colors and icons, source icons, and timestamp formatting. Implemented FlatList with performance optimizations (removeClippedSubviews, maxToRenderPerBatch, windowSize). Screen filters logs based on active filter and displays count. Shows empty state when no logs exist.
+
+#### TASK-020: プッシュ通知の実装 (Client-side) 🟡
+- **Completed**: 2025-01-01 (Client-side only)
+- **Summary**: Implemented client-side push notification support using Expo Notifications. Created usePushNotifications hook with notification permission request, Expo push token registration, and notification listeners. Integrated push notifications in App.tsx to send push token to server via WebSocket. Added notification handlers for received and tapped notifications. Installed expo-notifications, expo-device, and expo-constants packages. Server-side implementation (TASK-020 server) is pending.
 
 ---
 
