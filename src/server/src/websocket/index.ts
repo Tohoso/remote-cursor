@@ -1,0 +1,105 @@
+import { Server as HttpServer } from 'http';
+import { Server as SocketIOServer, Socket } from 'socket.io';
+import { InstructionHandler } from '../services/instructionHandler';
+
+export function setupWebSocket(
+  server: HttpServer,
+  instructionHandler: InstructionHandler
+): SocketIOServer {
+  const io = new SocketIOServer(server, {
+    cors: {
+      origin: '*',
+      methods: ['GET', 'POST'],
+    },
+  });
+
+  io.on('connection', (socket: Socket) => {
+    console.log('New Socket.IO connection established:', socket.id);
+
+    // Send welcome message
+    socket.emit('connection_status', {
+      type: 'connection',
+      message: 'Connected to Remote Cursor PC Agent Server',
+      timestamp: new Date().toISOString(),
+    });
+
+    // Handle instruction messages
+    socket.on('instruction', async (data: unknown) => {
+      try {
+        console.log('Received instruction:', data);
+
+        const message = {
+          type: 'instruction',
+          ...(typeof data === 'object' && data !== null ? data : { instruction: data }),
+        };
+
+        // Validate instruction
+        if (!instructionHandler.validateInstruction(message)) {
+          socket.emit('error', {
+            type: 'error',
+            message: 'Invalid instruction format. Expected: { instruction: "..." }',
+            timestamp: new Date().toISOString(),
+          });
+          return;
+        }
+
+        console.log('Processing instruction:', message.instruction);
+
+        // Handle instruction and create task file
+        const result = await instructionHandler.handleInstruction(message);
+
+        // Send response to client
+        if (result.success) {
+          socket.emit('instruction_received', {
+            type: 'instruction_received',
+            message: result.message,
+            filename: result.filename,
+            timestamp: new Date().toISOString(),
+          });
+        } else {
+          socket.emit('error', {
+            type: 'error',
+            message: result.message,
+            error: result.error,
+            timestamp: new Date().toISOString(),
+          });
+        }
+      } catch (error) {
+        console.error('Error handling instruction:', error);
+        socket.emit('error', {
+          type: 'error',
+          message: 'Internal server error',
+          timestamp: new Date().toISOString(),
+        });
+      }
+    });
+
+    // Handle ping for connection testing
+    socket.on('ping', () => {
+      socket.emit('pong', { timestamp: new Date().toISOString() });
+    });
+
+    // Handle disconnection
+    socket.on('disconnect', (reason) => {
+      console.log('Socket.IO connection closed:', socket.id, 'Reason:', reason);
+    });
+
+    // Handle errors
+    socket.on('error', (error: Error) => {
+      console.error('Socket.IO error:', error);
+    });
+  });
+
+  console.log('Socket.IO server initialized');
+  return io;
+}
+
+// Export function to broadcast project status updates
+export function broadcastProjectStatus(io: SocketIOServer, data: unknown): void {
+  io.emit('project_status', data);
+}
+
+// Export function to broadcast log updates
+export function broadcastLogUpdate(io: SocketIOServer, data: unknown): void {
+  io.emit('log_update', data);
+}
