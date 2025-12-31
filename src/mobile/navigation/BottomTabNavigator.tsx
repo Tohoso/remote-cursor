@@ -2,7 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { DashboardScreen } from '../app/screens/DashboardScreen';
-import { TerminalScreen } from '../app/screens/TerminalScreen';
+import { InstructionScreen } from '../app/screens/InstructionScreen';
 import { ScreenShareScreen } from '../app/screens/ScreenShareScreen';
 import { SettingsScreen } from '../app/screens/SettingsScreen';
 
@@ -17,8 +17,8 @@ export const BottomTabNavigator = () => {
 
           if (route.name === 'Dashboard') {
             iconName = focused ? 'grid' : 'grid-outline';
-          } else if (route.name === 'Terminal') {
-            iconName = focused ? 'terminal' : 'terminal-outline';
+          } else if (route.name === 'Instruction') {
+            iconName = focused ? 'create' : 'create-outline';
           } else if (route.name === 'ScreenShare') {
             iconName = focused ? 'desktop' : 'desktop-outline';
           } else if (route.name === 'Settings') {
@@ -46,7 +46,7 @@ export const BottomTabNavigator = () => {
       })}
     >
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
-      <Tab.Screen name="Terminal" component={TerminalScreen} />
+      <Tab.Screen name="Instruction" component={InstructionScreen} />
       <Tab.Screen
         name="ScreenShare"
         component={ScreenShareScreen}
