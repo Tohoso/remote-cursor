@@ -17,7 +17,7 @@ export const InstructionScreen = () => {
     // Send instruction via WebSocket
     socket.emit('instruction', {
       type: 'instruction',
-      payload: instruction.trim(),
+      instruction: instruction.trim(),
       timestamp: new Date().toISOString(),
     });
 

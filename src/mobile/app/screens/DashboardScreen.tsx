@@ -15,7 +15,40 @@ export const DashboardScreen = () => {
 
     // Listen for project status updates
     socket.on('project_status', (data) => {
-      if (Array.isArray(data)) {
+      console.log('Received project_status:', data);
+      // Server sends { type: 'project_status', data: ProjectStatus, timestamp: string }
+      if (data && data.data) {
+        const status = data.data;
+        // Map overallStatus to valid status type
+        const statusMap: Record<string, 'running' | 'idle' | 'error'> = {
+          'On Track': 'running',
+          'In Progress': 'running',
+          'Blocked': 'error',
+          'Unknown': 'idle',
+        };
+        // Convert ProjectStatus to Project array for display
+        const projectFromStatus = {
+          id: 'remote-cursor',
+          name: 'Remote Cursor',
+          currentTask: status.tracks?.[0]?.currentTask || 'Monitoring progress',
+          agent: status.tracks?.[0]?.owner || 'Claude Code',
+          status: statusMap[status.overallStatus] || 'idle',
+          progress: status.totalTasks > 0 
+            ? Math.round((status.completedTasks / status.totalTasks) * 100) 
+            : 0,
+        };
+        setProjects([projectFromStatus]);
+        
+        // Add a log entry for the update
+        const now = new Date();
+        const timeStr = now.toTimeString().split(' ')[0];
+        addLog({
+          id: `log-${Date.now()}`,
+          timestamp: timeStr,
+          level: 'info',
+          message: `Progress updated: ${status.completedTasks}/${status.totalTasks} tasks completed`,
+        });
+      } else if (Array.isArray(data)) {
         setProjects(data);
       } else {
         updateProject(data);

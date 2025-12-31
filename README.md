@@ -86,6 +86,16 @@ Options:
 - Press `a` for Android Emulator
 - Scan QR code with Expo Go app on physical device
 
+## Project Status
+
+**Status**: ✅ **Completed**
+
+Development and end-to-end (E2E) testing of the Remote Cursor application are now complete. All core features have been implemented and verified.
+
+For detailed test results, please see the [E2E Test Report](./E2E_Test_Report.md).
+
+---
+
 ## E2E Testing Scenario
 
 Follow these steps to verify the complete end-to-end workflow:
@@ -252,4 +262,5 @@ Current progress is tracked in [progress.md](./progress.md).
 
 - [Requirements (Japanese)](./docs/requirements/requirements_definition.md)
 - [Architecture Design (Japanese)](./docs/design/architecture_design.md)
+- [E2E Test Report](./E2E_Test_Report.md)
 - [UI Mockups](./docs/mockups/)

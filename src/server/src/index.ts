@@ -1,8 +1,9 @@
 import { createServer } from 'http';
 import path from 'path';
 import { createApp } from './app';
-import { setupWebSocket } from './websocket';
+import { setupWebSocket, broadcastProjectStatus } from './websocket';
 import { InstructionHandler } from './services/instructionHandler';
+import { FileWatcher } from './services/fileWatcher';
 import config from './config';
 
 // Create Express app
@@ -16,7 +17,18 @@ const projectRoot = path.resolve(__dirname, '../../..');
 const instructionHandler = new InstructionHandler(projectRoot);
 
 // Setup WebSocket server
-setupWebSocket(server, instructionHandler);
+const io = setupWebSocket(server, instructionHandler);
+
+// Setup File Watcher for progress.md
+const fileWatcher = new FileWatcher(projectRoot);
+fileWatcher.start((status) => {
+  console.log('Progress file changed, broadcasting update...');
+  broadcastProjectStatus(io, {
+    type: 'project_status',
+    data: status,
+    timestamp: new Date().toISOString(),
+  });
+});
 
 // Start server
 server.listen(config.port, () => {
@@ -31,16 +43,18 @@ server.listen(config.port, () => {
 });
 
 // Graceful shutdown
-process.on('SIGTERM', () => {
+process.on('SIGTERM', async () => {
   console.log('SIGTERM signal received: closing HTTP server');
+  await fileWatcher.stop();
   server.close(() => {
     console.log('HTTP server closed');
     process.exit(0);
   });
 });
 
-process.on('SIGINT', () => {
+process.on('SIGINT', async () => {
   console.log('SIGINT signal received: closing HTTP server');
+  await fileWatcher.stop();
   server.close(() => {
     console.log('HTTP server closed');
     process.exit(0);

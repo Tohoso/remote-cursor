@@ -1,125 +1,105 @@
 import { Server as HttpServer } from 'http';
-import { WebSocketServer, WebSocket } from 'ws';
+import { Server as SocketIOServer, Socket } from 'socket.io';
 import { InstructionHandler } from '../services/instructionHandler';
 
 export function setupWebSocket(
   server: HttpServer,
   instructionHandler: InstructionHandler
-): WebSocketServer {
-  const wss = new WebSocketServer({ server });
+): SocketIOServer {
+  const io = new SocketIOServer(server, {
+    cors: {
+      origin: '*',
+      methods: ['GET', 'POST'],
+    },
+  });
 
-  wss.on('connection', (ws: WebSocket) => {
-    console.log('New WebSocket connection established');
+  io.on('connection', (socket: Socket) => {
+    console.log('New Socket.IO connection established:', socket.id);
 
     // Send welcome message
-    ws.send(JSON.stringify({
+    socket.emit('connection_status', {
       type: 'connection',
       message: 'Connected to Remote Cursor PC Agent Server',
       timestamp: new Date().toISOString(),
-    }));
+    });
 
-    // Handle incoming messages
-    ws.on('message', async (data: Buffer) => {
+    // Handle instruction messages
+    socket.on('instruction', async (data: unknown) => {
       try {
-        const messageStr = data.toString();
-        console.log('Received message:', messageStr);
+        console.log('Received instruction:', data);
 
-        // Parse JSON message
-        let message: unknown;
-        try {
-          message = JSON.parse(messageStr);
-        } catch {
-          ws.send(JSON.stringify({
+        const message = {
+          type: 'instruction',
+          ...(typeof data === 'object' && data !== null ? data : { instruction: data }),
+        };
+
+        // Validate instruction
+        if (!instructionHandler.validateInstruction(message)) {
+          socket.emit('error', {
             type: 'error',
-            message: 'Invalid JSON format',
+            message: 'Invalid instruction format. Expected: { instruction: "..." }',
             timestamp: new Date().toISOString(),
-          }));
+          });
           return;
         }
 
-        // Handle different message types
-        if (typeof message === 'object' && message !== null && 'type' in message) {
-          const msgType = (message as { type: string }).type;
+        console.log('Processing instruction:', message.instruction);
 
-          if (msgType === 'instruction') {
-            await handleInstructionMessage(ws, message, instructionHandler);
-          } else {
-            // Echo back other messages
-            ws.send(JSON.stringify({
-              type: 'echo',
-              data: message,
-              timestamp: new Date().toISOString(),
-            }));
-          }
-        } else {
-          ws.send(JSON.stringify({
-            type: 'error',
-            message: 'Message must be an object with a type field',
+        // Handle instruction and create task file
+        const result = await instructionHandler.handleInstruction(message);
+
+        // Send response to client
+        if (result.success) {
+          socket.emit('instruction_received', {
+            type: 'instruction_received',
+            message: result.message,
+            filename: result.filename,
             timestamp: new Date().toISOString(),
-          }));
+          });
+        } else {
+          socket.emit('error', {
+            type: 'error',
+            message: result.message,
+            error: result.error,
+            timestamp: new Date().toISOString(),
+          });
         }
       } catch (error) {
-        console.error('Error handling message:', error);
-        ws.send(JSON.stringify({
+        console.error('Error handling instruction:', error);
+        socket.emit('error', {
           type: 'error',
           message: 'Internal server error',
           timestamp: new Date().toISOString(),
-        }));
+        });
       }
     });
 
-    // Handle connection close
-    ws.on('close', () => {
-      console.log('WebSocket connection closed');
+    // Handle ping for connection testing
+    socket.on('ping', () => {
+      socket.emit('pong', { timestamp: new Date().toISOString() });
+    });
+
+    // Handle disconnection
+    socket.on('disconnect', (reason) => {
+      console.log('Socket.IO connection closed:', socket.id, 'Reason:', reason);
     });
 
     // Handle errors
-    ws.on('error', (error: Error) => {
-      console.error('WebSocket error:', error);
+    socket.on('error', (error: Error) => {
+      console.error('Socket.IO error:', error);
     });
   });
 
-  console.log('WebSocket server initialized');
-  return wss;
+  console.log('Socket.IO server initialized');
+  return io;
 }
 
-/**
- * Handle instruction message
- */
-async function handleInstructionMessage(
-  ws: WebSocket,
-  message: unknown,
-  handler: InstructionHandler
-): Promise<void> {
-  // Validate instruction
-  if (!handler.validateInstruction(message)) {
-    ws.send(JSON.stringify({
-      type: 'error',
-      message: 'Invalid instruction format. Expected: { type: "instruction", instruction: "..." }',
-      timestamp: new Date().toISOString(),
-    }));
-    return;
-  }
+// Export function to broadcast project status updates
+export function broadcastProjectStatus(io: SocketIOServer, data: unknown): void {
+  io.emit('project_status', data);
+}
 
-  console.log('Processing instruction:', message.instruction);
-
-  // Handle instruction and create task file
-  const result = await handler.handleInstruction(message);
-
-  // Send response to client
-  if (result.success) {
-    ws.send(JSON.stringify({
-      type: 'instruction_received',
-      message: result.message,
-      filename: result.filename,
-      timestamp: new Date().toISOString(),
-    }));
-  } else {
-    ws.send(JSON.stringify({
-      type: 'error',
-      message: result.message,
-      error: result.error,
-      timestamp: new Date().toISOString(),
-    }));
-  }
+// Export function to broadcast log updates
+export function broadcastLogUpdate(io: SocketIOServer, data: unknown): void {
+  io.emit('log_update', data);
 }

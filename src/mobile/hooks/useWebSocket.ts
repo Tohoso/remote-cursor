@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 
-// Default to localhost for development
-// TODO: Make this configurable via environment variables
-const SOCKET_URL = 'http://localhost:3001';
+// Use environment variable or fallback to public server URL
+// For local development: http://localhost:3001
+// For deployed testing: use the exposed public URL
+const SOCKET_URL = process.env.EXPO_PUBLIC_SOCKET_URL || 'https://3001-iegsqpt4pp2cqp7dov0ek-f2bdf844.sg1.manus.computer';
 
 export type ConnectionStatus = 'connecting' | 'connected' | 'disconnected';
 
@@ -17,6 +18,7 @@ export const useWebSocket = () => {
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionAttempts: Infinity,
+      transports: ['websocket', 'polling'],
     });
 
     // Connection event handlers
