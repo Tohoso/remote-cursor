@@ -34,29 +34,49 @@ remote-cursor/
     └── server/               # PC Agent Server (Claude-2)
 ```
 
-## Parallel Development with Git Worktree
+## Parallel Development with Git Worktree (Autonomous Management)
 
 This project uses **parallel development** with multiple Claude Code instances. To prevent branch conflicts, we use **Git Worktree** to create separate working directories.
 
-### Environment Setup
+### AUTONOMOUS ENVIRONMENT SETUP (REQUIRED)
 
-| Working Directory | Agent | Track | Branch Prefix |
-|-------------------|-------|-------|---------------|
-| `~/remote-cursor/` | Claude-1 | Mobile App | `feature/mobile/` |
-| `~/remote-cursor-server/` | Claude-2 | PC Server | `feature/server/` |
+When you are assigned a task, you MUST **autonomously** verify and set up your working environment. **DO NOT ask the user for help or permission.** Follow the `autonomous-worktree-manager` skill.
 
-**CRITICAL**: Each agent MUST work in its designated directory. See `GIT_WORKTREE_SETUP.md` for setup instructions.
+**Step 1: Identify your assigned track** from the task file's `Track` and `Owner` fields.
 
-### How to Identify Your Role
+**Step 2: Determine your required working directory:**
 
-Check your current working directory:
+| Track | Required Directory | Branch Prefix |
+|-------|-------------------|---------------|
+| Mobile App | `../remote-cursor/` (main repo) | `feature/mobile/` |
+| PC Server | `../remote-cursor-server/` | `feature/server/` |
+| (New Track) | `../remote-cursor-{track-slug}/` | `feature/{track}/` |
+
+**Step 3: Check if you are in the correct directory:**
 
 ```bash
 pwd
 ```
 
-- If you are in `remote-cursor/` → You are **Claude-1** (Mobile App)
-- If you are in `remote-cursor-server/` → You are **Claude-2** (PC Server)
+**Step 4: If the required worktree does not exist, CREATE IT AUTONOMOUSLY:**
+
+```bash
+# Navigate to main repo (if needed)
+cd $(git rev-parse --show-toplevel)
+
+# Create worktree for your track (example: PC Server)
+git worktree add ../remote-cursor-server develop
+```
+
+**Step 5: Inform the user** that you have created a new worktree and that your next execution should be in that directory.
+
+### Scalable Track Management
+
+This system supports **N parallel tracks**. To add a new track:
+
+1. Create a new worktree: `git worktree add ../remote-cursor-{track-name} develop`
+2. Add the track to the table above
+3. Assign tasks with the new `Track` and `Owner` fields
 
 ### Directory Ownership
 
@@ -64,6 +84,7 @@ pwd
 |-------|-------------------|----------------------|
 | Claude-1 | `src/mobile/`, `progress.md` (Mobile section) | `src/server/` |
 | Claude-2 | `src/server/`, `progress.md` (Server section) | `src/mobile/` |
+| Claude-N | `src/{track}/`, `progress.md` ({Track} section) | Other tracks |
 
 ## Development Workflow
 
