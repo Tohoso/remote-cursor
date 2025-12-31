@@ -34,16 +34,36 @@ remote-cursor/
     └── server/               # PC Agent Server (Claude-2)
 ```
 
-## Parallel Development
+## Parallel Development with Git Worktree
 
-This project uses **parallel development** with multiple Claude Code instances:
+This project uses **parallel development** with multiple Claude Code instances. To prevent branch conflicts, we use **Git Worktree** to create separate working directories.
 
-| Track | Owner | Directory | Branch Prefix |
-|-------|-------|-----------|---------------|
-| Mobile App | Claude-1 | `src/mobile/` | `feature/mobile/` |
-| PC Server | Claude-2 | `src/server/` | `feature/server/` |
+### Environment Setup
 
-**Important**: Only modify files within your assigned directory.
+| Working Directory | Agent | Track | Branch Prefix |
+|-------------------|-------|-------|---------------|
+| `~/remote-cursor/` | Claude-1 | Mobile App | `feature/mobile/` |
+| `~/remote-cursor-server/` | Claude-2 | PC Server | `feature/server/` |
+
+**CRITICAL**: Each agent MUST work in its designated directory. See `GIT_WORKTREE_SETUP.md` for setup instructions.
+
+### How to Identify Your Role
+
+Check your current working directory:
+
+```bash
+pwd
+```
+
+- If you are in `remote-cursor/` → You are **Claude-1** (Mobile App)
+- If you are in `remote-cursor-server/` → You are **Claude-2** (PC Server)
+
+### Directory Ownership
+
+| Agent | Allowed to Modify | NOT Allowed to Modify |
+|-------|-------------------|----------------------|
+| Claude-1 | `src/mobile/`, `progress.md` (Mobile section) | `src/server/` |
+| Claude-2 | `src/server/`, `progress.md` (Server section) | `src/mobile/` |
 
 ## Development Workflow
 
