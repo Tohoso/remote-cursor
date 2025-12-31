@@ -1,32 +1,34 @@
 import { create } from 'zustand';
-import { Project, Log } from '../data/mockData';
+import { ProjectStatus, Track, Blocker, ActivityLogEntry, ConnectionStatus } from '@common/types';
 
 interface DashboardState {
-  projects: Project[];
-  logs: Log[];
-  setProjects: (projects: Project[]) => void;
-  updateProject: (project: Project) => void;
-  addLog: (log: Log) => void;
-  setLogs: (logs: Log[]) => void;
+  projectStatus: ProjectStatus | null;
+  connectionStatus: ConnectionStatus;
+  logs: ActivityLogEntry[];
+
+  // Actions
+  setProjectStatus: (status: ProjectStatus) => void;
+  setConnectionStatus: (status: ConnectionStatus) => void;
+  addLog: (log: ActivityLogEntry) => void;
+  clearLogs: () => void;
 }
 
 export const useDashboardStore = create<DashboardState>((set) => ({
-  projects: [],
+  projectStatus: null,
+  connectionStatus: 'disconnected',
   logs: [],
 
-  setProjects: (projects) => set({ projects }),
+  setProjectStatus: (status) => set({ projectStatus: status }),
+  setConnectionStatus: (status) => set({ connectionStatus: status }),
+  addLog: (log) => set((state) => ({ logs: [log, ...state.logs].slice(0, 100) })),
+  clearLogs: () => set({ logs: [] }),
+}));
 
-  updateProject: (updatedProject) =>
-    set((state) => ({
-      projects: state.projects.map((p) =>
-        p.id === updatedProject.id ? updatedProject : p
-      ),
-    })),
-
-  addLog: (log) =>
-    set((state) => ({
-      logs: [log, ...state.logs].slice(0, 50), // Keep last 50 logs
-    })),
-
-  setLogs: (logs) => set({ logs }),
+// Selectors
+export const useTracks = () => useDashboardStore((state) => state.projectStatus?.tracks ?? []);
+export const useBlockers = () => useDashboardStore((state) => state.projectStatus?.blockers ?? []);
+export const useOverallProgress = () => useDashboardStore((state) => ({
+  completed: state.projectStatus?.completedTasks ?? 0,
+  total: state.projectStatus?.totalTasks ?? 0,
+  status: state.projectStatus?.overallStatus ?? 'Unknown',
 }));

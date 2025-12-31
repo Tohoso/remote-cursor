@@ -57,7 +57,7 @@ When completed:
 |:---|:---|:---|:---:|:---|
 | TASK-010 | common | 共有データモデルの定義 | ✅ Done | - |
 | TASK-011 | server | サーバーサイドパーサーの強化 | ⚪ Ready | TASK-010 |
-| TASK-012 | mobile-app | モバイルアプリ状態管理の刷新 | ⚪ Ready | TASK-010 |
+| TASK-012 | mobile-app | モバイルアプリ状態管理の刷新 | ✅ Done | TASK-010 |
 
 ### Phase 2: Dashboard UI (EPIC-04 ~ EPIC-05)
 
@@ -143,6 +143,10 @@ When completed:
 #### TASK-010: 共有データモデルの定義 ✅
 - **Completed**: 2025-01-01
 - **Summary**: Created shared type definitions in src/common/types.ts, configured @common/* path aliases in both mobile and server tsconfig.json files. Verified TypeScript compilation works correctly with the new imports.
+
+#### TASK-012: モバイルアプリ状態管理の刷新 ✅
+- **Completed**: 2025-01-01
+- **Summary**: Refactored Zustand store to use new data model from @common/types. Implemented ProjectStatus-based state management with selectors (useTracks, useBlockers, useOverallProgress). Updated useWebSocket hook to handle project_status events and update store automatically. Updated DashboardScreen to use new store structure with backward compatibility for existing UI components.
 
 ---
 
