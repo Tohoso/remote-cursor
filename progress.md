@@ -4,7 +4,7 @@
 
 | Track | Owner | Current Task | Branch | Status |
 |-------|-------|--------------|--------|--------|
-| **Mobile App** | Claude-1 | TASK-004: WebSocket integration | `feature/mobile/task-004-websocket` | ⚪ Ready |
+| **Mobile App** | Claude-1 | TASK-004: WebSocket integration | `feature/mobile/task-004-websocket-integration` | 🟡 In Progress |
 | **PC Server** | Claude-2 | TASK-006: File watcher | `feature/server/task-006-filewatcher` | ⚪ Ready |
 
 **Orchestrator**: Manus  
@@ -19,7 +19,7 @@
 | TASK-001 | Mobile | Initialize Expo project | ✅ Done | - |
 | TASK-002 | Mobile | Bottom navigation | ✅ Done | TASK-001 |
 | TASK-003 | Mobile | Dashboard screen | ✅ Done | TASK-002 |
-| TASK-004 | Mobile | WebSocket integration | ⚪ Ready | TASK-003, TASK-005 |
+| TASK-004 | Mobile | WebSocket integration | 🟡 In Progress | TASK-003, TASK-005 |
 | TASK-005 | Server | Initialize Node.js server | ✅ Done | - |
 | TASK-006 | Server | File watcher & emitter | ⚪ Ready | TASK-005 |
 | TASK-007 | Mobile | Instruction input screen | ⚪ Ready | TASK-004 |
@@ -35,8 +35,10 @@
 - [x] TASK-002: Implement bottom navigation and screen routing
 - [x] TASK-003: Create Dashboard screen with mock data
 
+### In Progress
+- [ ] TASK-004: WebSocket integration & real-time dashboard 🟡
+
 ### Pending Tasks
-- [ ] TASK-004: WebSocket integration & real-time dashboard ⚪
 - [ ] TASK-007: Instruction input screen ⚪
 - [ ] TASK-009: Final integration & E2E testing ⏳
 
