@@ -92,7 +92,6 @@ When completed:
 ---
 
 ## Previous Sprint: Sprint 1 - Core Infrastructure (Completed ✅)
-
 | Task | Track | Description | Status | Dependencies |
 |:---|:---|:---|:---:|:---|
 | TASK-001 | mobile-app | Initialize Expo project | ✅ Done | - |
@@ -173,6 +172,7 @@ When completed:
 - **Summary**: Set up React Navigation with StackNavigator architecture. Created navigation/types.ts with RootStackParamList type definitions. Implemented three placeholder screens (TrackDetailScreen, BlockerDetailScreen, ActivityLogScreen) for TASK-016, 017, 018. Updated App.tsx to use nested navigation structure (Stack > MainTabs). Updated TrackCard and BlockerAlert components with actual navigation using useNavigation hook. Installed @react-navigation/native-stack package. TypeScript compilation verified successfully.
 
 #### TASK-016: トラック詳細画面の実装 ✅
+
 - **Completed**: 2025-01-01
 - **Summary**: Implemented TrackDetailScreen with full functionality. Created TrackInfoCard component displaying track name, status, agent, and progress bar. Created TaskTimelineItem component with timeline visualization using status icons and colored connectors. Created TaskTimeline component listing all tasks with timeline layout. Screen reads from dashboardStore and displays track not found state when needed. All components use theme.ts for consistent styling.
 
