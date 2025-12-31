@@ -310,4 +310,226 @@ describe('ProgressParser', () => {
       expect(result.overallStatus).toBe('Paused');
     });
   });
+
+  describe('calculateDiff', () => {
+    it('should detect task status changes', () => {
+      // First parse - initial state
+      const initialContent = `# Progress
+
+**Last Updated**: 2025-01-01
+
+| Task | Track | Description | Status | Dependencies |
+|:---|:---|:---|:---:|:---|
+| TASK-001 | server | Task 1 | ⚪ Ready | - |
+| TASK-002 | server | Task 2 | ✅ Done | - |
+`;
+
+      mockFs.readFileSync.mockReturnValue(initialContent);
+      const initialStatus = parser.parseProgress();
+      parser.calculateDiff(initialStatus); // Establish baseline
+
+      // Second parse - task status changed
+      const updatedContent = `# Progress
+
+**Last Updated**: 2025-01-01
+
+| Task | Track | Description | Status | Dependencies |
+|:---|:---|:---|:---:|:---|
+| TASK-001 | server | Task 1 | 🟡 In Progress | - |
+| TASK-002 | server | Task 2 | ✅ Done | - |
+`;
+
+      mockFs.readFileSync.mockReturnValue(updatedContent);
+      const updatedStatus = parser.parseProgress();
+      const diff = parser.calculateDiff(updatedStatus);
+
+      expect(diff.taskUpdates).toHaveLength(1);
+      expect(diff.taskUpdates[0].id).toBe('TASK-001');
+      expect(diff.taskUpdates[0].status).toBe('in_progress');
+      expect(diff.majorChange).toBe(false);
+    });
+
+    it('should detect new blockers', () => {
+      // First parse - no blockers
+      const initialContent = `# Progress
+
+**Last Updated**: 2025-01-01
+
+| Task | Track | Description | Status | Dependencies |
+|:---|:---|:---|:---:|:---|
+| TASK-001 | server | Task 1 | ⚪ Ready | - |
+`;
+
+      mockFs.readFileSync.mockReturnValue(initialContent);
+      const initialStatus = parser.parseProgress();
+      parser.calculateDiff(initialStatus); // Establish baseline
+
+      // Second parse - blocker added
+      const updatedContent = `# Progress
+
+**Last Updated**: 2025-01-01
+
+| Task | Track | Description | Status | Dependencies |
+|:---|:---|:---|:---:|:---|
+| TASK-001 | server | Task 1 | ⏳ Blocked | - |
+`;
+
+      mockFs.readFileSync.mockReturnValue(updatedContent);
+      const updatedStatus = parser.parseProgress();
+      const diff = parser.calculateDiff(updatedStatus);
+
+      expect(diff.newBlockers).toHaveLength(1);
+      expect(diff.newBlockers[0].taskId).toBe('TASK-001');
+      expect(diff.taskUpdates).toHaveLength(1); // Task status also changed
+    });
+
+    it('should detect resolved blockers', () => {
+      // First parse - with blocker
+      const initialContent = `# Progress
+
+**Last Updated**: 2025-01-01
+
+| Task | Track | Description | Status | Dependencies |
+|:---|:---|:---|:---:|:---|
+| TASK-001 | server | Task 1 | ⏳ Blocked | - |
+`;
+
+      mockFs.readFileSync.mockReturnValue(initialContent);
+      const initialStatus = parser.parseProgress();
+      parser.calculateDiff(initialStatus); // Establish baseline
+
+      // Second parse - blocker resolved
+      const updatedContent = `# Progress
+
+**Last Updated**: 2025-01-01
+
+| Task | Track | Description | Status | Dependencies |
+|:---|:---|:---|:---:|:---|
+| TASK-001 | server | Task 1 | 🟡 In Progress | - |
+`;
+
+      mockFs.readFileSync.mockReturnValue(updatedContent);
+      const updatedStatus = parser.parseProgress();
+      const diff = parser.calculateDiff(updatedStatus);
+
+      expect(diff.resolvedBlockers).toHaveLength(1);
+      expect(diff.resolvedBlockers[0]).toBe('BLK-TASK-001');
+    });
+
+    it('should detect major changes when tracks change', () => {
+      // First parse - one track
+      const initialContent = `# Progress
+
+**Last Updated**: 2025-01-01
+
+| Task | Track | Description | Status | Dependencies |
+|:---|:---|:---|:---:|:---|
+| TASK-001 | server | Task 1 | ⚪ Ready | - |
+`;
+
+      mockFs.readFileSync.mockReturnValue(initialContent);
+      const initialStatus = parser.parseProgress();
+      parser.calculateDiff(initialStatus); // Establish baseline
+
+      // Second parse - new track added
+      const updatedContent = `# Progress
+
+**Last Updated**: 2025-01-01
+
+| Task | Track | Description | Status | Dependencies |
+|:---|:---|:---|:---:|:---|
+| TASK-001 | server | Task 1 | ⚪ Ready | - |
+| TASK-002 | mobile-app | Task 2 | ⚪ Ready | - |
+`;
+
+      mockFs.readFileSync.mockReturnValue(updatedContent);
+      const updatedStatus = parser.parseProgress();
+      const diff = parser.calculateDiff(updatedStatus);
+
+      expect(diff.majorChange).toBe(true);
+    });
+
+    it('should mark first parse as major change', () => {
+      const mockContent = `# Progress
+
+**Last Updated**: 2025-01-01
+
+| Task | Track | Description | Status | Dependencies |
+|:---|:---|:---|:---:|:---|
+| TASK-001 | server | Task 1 | ⚪ Ready | - |
+`;
+
+      mockFs.readFileSync.mockReturnValue(mockContent);
+      const status = parser.parseProgress();
+
+      // Clear previous status to simulate first parse
+      const freshParser = new ProgressParser(mockWatchDir);
+      const diff = freshParser.calculateDiff(status);
+
+      expect(diff.majorChange).toBe(true);
+      expect(diff.taskUpdates.length).toBeGreaterThan(0);
+    });
+
+    it('should not report changes when nothing changed', () => {
+      const mockContent = `# Progress
+
+**Last Updated**: 2025-01-01
+
+| Task | Track | Description | Status | Dependencies |
+|:---|:---|:---|:---:|:---|
+| TASK-001 | server | Task 1 | ⚪ Ready | - |
+`;
+
+      mockFs.readFileSync.mockReturnValue(mockContent);
+      const firstStatus = parser.parseProgress();
+      parser.calculateDiff(firstStatus); // Establish baseline
+
+      // Parse again with same content
+      const status = parser.parseProgress();
+      const diff = parser.calculateDiff(status);
+
+      expect(diff.taskUpdates).toHaveLength(0);
+      expect(diff.newBlockers).toHaveLength(0);
+      expect(diff.resolvedBlockers).toHaveLength(0);
+      expect(diff.majorChange).toBe(false);
+    });
+
+    it('should detect multiple task updates', () => {
+      // First parse
+      const initialContent = `# Progress
+
+**Last Updated**: 2025-01-01
+
+| Task | Track | Description | Status | Dependencies |
+|:---|:---|:---|:---:|:---|
+| TASK-001 | server | Task 1 | ⚪ Ready | - |
+| TASK-002 | server | Task 2 | ⚪ Ready | - |
+| TASK-003 | server | Task 3 | ⚪ Ready | - |
+`;
+
+      mockFs.readFileSync.mockReturnValue(initialContent);
+      const initialStatus = parser.parseProgress();
+      parser.calculateDiff(initialStatus); // Establish baseline
+
+      // Second parse - multiple tasks changed
+      const updatedContent = `# Progress
+
+**Last Updated**: 2025-01-01
+
+| Task | Track | Description | Status | Dependencies |
+|:---|:---|:---|:---:|:---|
+| TASK-001 | server | Task 1 | 🟡 In Progress | - |
+| TASK-002 | server | Task 2 | ✅ Done | - |
+| TASK-003 | server | Task 3 | ⚪ Ready | - |
+`;
+
+      mockFs.readFileSync.mockReturnValue(updatedContent);
+      const updatedStatus = parser.parseProgress();
+      const diff = parser.calculateDiff(updatedStatus);
+
+      expect(diff.taskUpdates).toHaveLength(2);
+      expect(diff.taskUpdates.map((t) => t.id)).toContain('TASK-001');
+      expect(diff.taskUpdates.map((t) => t.id)).toContain('TASK-002');
+    });
+  });
 });

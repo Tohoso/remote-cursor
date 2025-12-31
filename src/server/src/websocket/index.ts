@@ -103,3 +103,13 @@ export function broadcastProjectStatus(io: SocketIOServer, data: unknown): void 
 export function broadcastLogUpdate(io: SocketIOServer, data: unknown): void {
   io.emit('log_update', data);
 }
+
+// Export function to broadcast task updates
+export function broadcastTaskUpdate(io: SocketIOServer, data: unknown): void {
+  io.emit('task_update', data);
+}
+
+// Export function to broadcast blocker alerts
+export function broadcastBlockerAlert(io: SocketIOServer, data: unknown): void {
+  io.emit('blocker_alert', data);
+}
