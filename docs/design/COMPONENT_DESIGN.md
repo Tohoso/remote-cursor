@@ -12,9 +12,39 @@
 
 ## 2. 設計思想
 
+### 2.1. デザインパターン
+
 - **Atomic Design**: コンポーネントを `Atoms` -> `Molecules` -> `Organisms` の粒度で分類し、これらを組み合わせて `Templates` (画面) を構築します。
 - **Presentational and Container Components**: UIの見た目のみ責務を持つPresentationalコンポーネントと、ロジックや状態管理に責務を持つContainerコンポーネントを分離します。
 - **Props Driven**: コンポーネントは主にPropsを通じてデータを受け取り、自身の状態管理は最小限に留めます。状態の多くはZustandストアで一元管理します。
+
+### 2.2. フォント使用ガイドライン
+
+エヴァンゲリオン的なカッコよさと視認性を両立するため、以下のフォント構成を採用しています。
+
+| 用途 | フォント | 使用箇所 |
+|:---|:---|:---|
+| **見出し・タイトル** | Zen Old Mincho | 画面タイトル、カードタイトル、セクションヘッダー |
+| **本文・UI** | Noto Sans JP | ラベル、説明文、ボタンテキスト、入力フィールド |
+| **数字・コード** | JetBrains Mono | タスクID、タイムスタンプ、PR番号、ログ |
+
+**実装例:**
+
+```tsx
+import { typography } from '../theme';
+
+// 見出し（Zen Old Mincho）
+<Text style={typography.h1}>ダッシュボード</Text>
+
+// 本文（Noto Sans JP）
+<Text style={typography.body}>プロジェクトの進捗を確認できます</Text>
+
+// タスクID（JetBrains Mono）
+<Text style={typography.mono}>TASK-010</Text>
+
+// タイムスタンプ（JetBrains Mono）
+<Text style={typography.monoSmall}>14:32:05</Text>
+```
 
 ## 3. ディレクトリ構造
 

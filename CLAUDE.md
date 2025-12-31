@@ -304,3 +304,94 @@ After completing a task:
 4. Write unit tests
 5. Update `progress.md`
 6. Create PR
+
+
+---
+
+## UI/UX Design Guidelines
+
+### デフォルト言語
+
+このアプリケーションのデフォルト言語は**日本語**です。すべてのUIテキスト、ラベル、メッセージは日本語で実装してください。
+
+### スタイルガイド
+
+**必読**: `docs/design/STYLE_GUIDE.md`
+
+このファイルには以下が定義されています：
+- カラーパレット（ダークテーマ）
+- タイポグラフィ（フォントファミリー、サイズ、ウェイト）
+- スペーシングシステム（4pxグリッド）
+- コンポーネントスタイル
+- 画面モックアップ
+
+### フォント構成
+
+エヴァンゲリオン的なカッコよさと視認性を両立するため、以下のフォント構成を採用しています：
+
+| 用途 | フォント | 特徴 |
+|:---|:---|:---|
+| **見出し・タイトル** | Zen Old Mincho | エヴァ風の重厚感、オールドスタイル明朝体 |
+| **本文・UI** | Noto Sans JP | 視認性・可読性が最高、汎用的 |
+| **数字・コード** | JetBrains Mono | 等幅、プログラマー向け |
+
+### フォントインストール
+
+Sprint 2のUI実装を開始する前に、以下のコマンドでフォントをインストールしてください：
+
+```bash
+cd src/mobile
+npx expo install @expo-google-fonts/zen-old-mincho @expo-google-fonts/noto-sans-jp @expo-google-fonts/jetbrains-mono expo-font
+```
+
+### テーマファイル
+
+`src/mobile/theme.ts` にすべてのデザイントークンが定義されています。コンポーネント実装時は必ずこのファイルからインポートして使用してください。
+
+```typescript
+import { colors, typography, spacing, fontFamilies } from '../theme';
+
+// 使用例
+const styles = StyleSheet.create({
+  title: {
+    ...typography.h1,
+  },
+  body: {
+    ...typography.body,
+  },
+  taskId: {
+    ...typography.mono,
+  },
+});
+```
+
+### フォントローダー
+
+`src/mobile/utils/fonts.ts` にフォントローダーユーティリティが用意されています。App.tsxでフォントをロードする際に使用してください。
+
+```typescript
+import { useFonts } from 'expo-font';
+import { customFonts } from './utils/fonts';
+
+export default function App() {
+  const [fontsLoaded] = useFonts(customFonts);
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
+
+  return <MainApp />;
+}
+```
+
+### 実装チェックリスト
+
+UI実装時は以下を確認してください：
+
+- [ ] フォントが正しくロードされている
+- [ ] 見出しに `Zen Old Mincho` が使用されている
+- [ ] 本文に `Noto Sans JP` が使用されている
+- [ ] タスクID、タイムスタンプに `JetBrains Mono` が使用されている
+- [ ] カラーが `theme.ts` の値と一致している
+- [ ] スペーシングが4pxグリッドに従っている
+- [ ] モックアップ（`docs/design/components/*.png`）と視覚的に一致している

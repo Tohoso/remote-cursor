@@ -30,6 +30,7 @@
 | データモデル設計書 | `docs/design/DATA_MODEL.md` | 型定義・データ構造の詳細仕様 | ✅ 完了 |
 | コンポーネント設計書 | `docs/design/COMPONENT_DESIGN.md` | UIコンポーネントの階層・Props・状態 | ✅ 完了 |
 | 状態管理設計書 | `docs/design/STATE_MANAGEMENT.md` | Zustandストアの設計 | ✅ 完了 |
+| スタイルガイド | `docs/design/STYLE_GUIDE.md` | カラー・フォント・スペーシング・モックアップ | ✅ 完了 |
 
 ### 3. データフロー・シーケンス系
 
