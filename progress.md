@@ -57,7 +57,7 @@ When completed:
 |:---|:---|:---|:---:|:---|
 | TASK-010 | common | 共有データモデルの定義 | ✅ Done | - |
 | TASK-011 | server | サーバーサイドパーサーの強化 | ✅ Done | TASK-010 |
-| TASK-012 | mobile-app | モバイルアプリ状態管理の刷新 | ⚪ Ready | TASK-010 |
+| TASK-012 | mobile-app | モバイルアプリ状態管理の刷新 | ✅ Done | TASK-010 |
 
 ### Phase 2: Dashboard UI (EPIC-04 ~ EPIC-05)
 
@@ -146,7 +146,11 @@ When completed:
 
 #### TASK-011: サーバーサイドパーサーの強化 ✅
 - **Completed**: 2025-01-01
-- **Summary**: Refactored progressParser.ts to use @common/types. Implemented extractTracks, extractBlockers, and determineOverallStatus methods. Created comprehensive unit tests with 97.95% coverage. Fixed TypeScript compilation issues and improved PR/completion data extraction with better regex patterns.
+- **Summary**: Refactored progressParser.ts to use @common/types. Implemented extractTracks, extractBlockers, and determineOverallStatus methods. Created comprehensive unit tests with 97.95% coverage.
+
+#### TASK-012: モバイルアプリ状態管理の刷新 ✅
+- **Completed**: 2025-01-01
+- **Summary**: Refactored Zustand store to use new data model from @common/types. Implemented ProjectStatus-based state management with selectors (useTracks, useBlockers, useOverallProgress).
 
 ---
 
