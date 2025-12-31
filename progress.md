@@ -1,70 +1,127 @@
 # Remote Cursor - Development Progress
 
-## Current Status
+## Current Status (Parallel Development)
 
-| Item | Value |
-|------|-------|
-| **Phase** | Phase 1: Project Setup & Mobile App Foundation |
-| **Status** | 🟡 In Progress |
-| **Current Task** | TASK-002: Implement bottom navigation and screen routing |
-| **Active Agent** | Awaiting Manus |
-| **Last Updated** | 2024-12-31 |
+| Track | Owner | Current Task | Branch | Status |
+|-------|-------|--------------|--------|--------|
+| **Mobile App** | Claude-1 | TASK-004: WebSocket integration | `feature/mobile/task-004-websocket` | ⚪ Ready |
+| **PC Server** | Claude-2 | TASK-006: File watcher | `feature/server/task-006-filewatcher` | ⚪ Ready |
 
-## Project Timeline
+**Orchestrator**: Manus  
+**Last Updated**: 2025-01-01
 
-### Phase 1: Project Setup & Mobile App Foundation (Current)
+---
+
+## Task Overview
+
+| Task | Track | Description | Status | Dependencies |
+|------|-------|-------------|--------|--------------|
+| TASK-001 | Mobile | Initialize Expo project | ✅ Done | - |
+| TASK-002 | Mobile | Bottom navigation | ✅ Done | TASK-001 |
+| TASK-003 | Mobile | Dashboard screen | ✅ Done | TASK-002 |
+| TASK-004 | Mobile | WebSocket integration | ⚪ Ready | TASK-003, TASK-005 |
+| TASK-005 | Server | Initialize Node.js server | ✅ Done | - |
+| TASK-006 | Server | File watcher & emitter | ⚪ Ready | TASK-005 |
+| TASK-007 | Mobile | Instruction input screen | ⚪ Ready | TASK-004 |
+| TASK-008 | Server | Instruction handler | ⚪ Ready | TASK-006 |
+| TASK-009 | Both | Final integration & E2E | ⏳ Blocked | TASK-004,006,007,008 |
+
+---
+
+## Mobile App Timeline (Owner: Claude-1)
+
+### Completed Tasks
 - [x] TASK-001: Initialize Expo project and setup base structure
-- [ ] TASK-002: Implement bottom navigation and screen routing
-- [ ] TASK-003: Create Dashboard screen with mock data
-- [ ] TASK-004: Implement Settings screen with connection management UI
+- [x] TASK-002: Implement bottom navigation and screen routing
+- [x] TASK-003: Create Dashboard screen with mock data
 
-### Phase 2: PC Agent Server Development
-- [ ] TASK-005: Initialize Node.js server with Express and WebSocket
-- [ ] TASK-006: Implement file system watcher for progress.md
-- [ ] TASK-007: Create REST API for task management
-- [ ] TASK-008: Implement real-time log streaming via WebSocket
+### Pending Tasks
+- [ ] TASK-004: WebSocket integration & real-time dashboard ⚪
+- [ ] TASK-007: Instruction input screen ⚪
+- [ ] TASK-009: Final integration & E2E testing ⏳
 
-### Phase 3: Mobile-Server Integration
-- [ ] TASK-009: Connect mobile app to PC server via WebSocket
-- [ ] TASK-010: Implement real-time dashboard updates
-- [ ] TASK-011: Create instruction input and task submission flow
-- [ ] TASK-012: Implement push notifications
+---
 
-### Phase 4: Advanced Features
-- [ ] TASK-013: Integrate code-server WebView
-- [ ] TASK-014: Implement WebRTC screen sharing
-- [ ] TASK-015: Add Tailscale connection management
+## PC Server Timeline (Owner: Claude-2)
 
-### Phase 5: Testing & Polish
-- [ ] TASK-016: Write unit tests
-- [ ] TASK-017: Write E2E tests
-- [ ] TASK-018: UI polish and performance optimization
-- [ ] TASK-019: Documentation and deployment guide
+### Completed Tasks
+- [x] TASK-005: Initialize Node.js server with Express and WebSocket
 
-## Completed Tasks
+### Pending Tasks
+- [ ] TASK-006: File watcher & project status emitter ⚪
+- [ ] TASK-008: Instruction handler & task file creation ⚪
+- [ ] TASK-009: Final integration & E2E testing ⏳
 
-### TASK-001: Initialize Expo project and setup base structure ✅
+---
 
+## Task Dependency Graph
+
+```
+Phase 1 (Foundation) - COMPLETED ✅
+├── TASK-001: Init Expo ✅
+├── TASK-002: Navigation ✅
+├── TASK-003: Dashboard UI ✅
+└── TASK-005: Init Server ✅
+
+Phase 2 (Real-time Communication) - READY TO START
+├── TASK-004: WebSocket Client (Mobile) ⚪ ← Claude-1 START HERE
+└── TASK-006: File Watcher + Emitter (Server) ⚪ ← Claude-2 START HERE
+
+Phase 3 (Instruction Flow) - PENDING
+├── TASK-007: Instruction Screen (Mobile) ⚪
+└── TASK-008: Instruction Handler (Server) ⚪
+
+Phase 4 (Integration) - BLOCKED
+└── TASK-009: Final Integration & E2E ⏳
+    └── Depends on: TASK-004, 006, 007, 008
+```
+
+---
+
+## Completed Task Details
+
+### TASK-001: Initialize Expo project ✅
 - **Completed**: 2024-12-31
-- **Completed by**: Claude Code
-- **Summary**:
-  - Created src/mobile directory structure
-  - Initialized Expo project with TypeScript template
-  - Installed core dependencies (nativewind, react-navigation packages)
-  - Configured NativeWind with tailwind.config.js and babel.config.js
-  - Created welcome screen with "Welcome to Remote Cursor" message
-  - Verified app runs successfully with `npx expo start`
+- **PR**: #1 (Merged)
+- **Summary**: Created Expo project with TypeScript, NativeWind configured
 
-## Blockers & Issues
+### TASK-002: Bottom navigation ✅
+- **Completed**: 2024-12-31
+- **PR**: #2 (Merged)
+- **Summary**: 4-tab navigation (Dashboard, Terminal, ScreenShare, Settings)
 
-(None currently)
+### TASK-003: Dashboard screen ✅
+- **Completed**: 2024-12-31
+- **PR**: #4 (Merged)
+- **Summary**: Project status cards, log viewer with mock data, dark theme
 
-## Notes
+### TASK-005: Initialize Node.js server ✅
+- **Completed**: 2024-12-31
+- **PR**: #3 (Merged)
+- **Summary**: Express + WebSocket server, TypeScript, CORS configured
 
-- This project uses the Manus × Claude Code collaboration workflow
-- Manus handles orchestration, research, and design decisions
-- Claude Code handles implementation
-- All communication happens through this file and the tasks/ directory
+---
+
+## Parallel Development Rules
+
+1. **Directory Ownership**:
+   - Claude-1: `src/mobile/` only
+   - Claude-2: `src/server/` only
+
+2. **Branch Naming**:
+   - Mobile: `feature/mobile/task-XXX-description`
+   - Server: `feature/server/task-XXX-description`
+
+3. **Conflict Avoidance**:
+   - Always `git pull origin develop` before starting work
+   - Update only your track's section in this file
+   - Manus will resolve any conflicts
+
+4. **Communication**:
+   - Create `tasks/MANUS-REQUEST-*.md` if blocked
+   - Wait for `tasks/MANUS-RESPONSE-*.md` before proceeding
+
+---
 
 ## Decision Log
 
@@ -73,3 +130,27 @@
 | 2024-12-31 | Use Expo for mobile development | Cross-platform support, rapid development | Manus |
 | 2024-12-31 | Use Tailscale for secure networking | Easy setup, P2P encryption, MagicDNS | Manus |
 | 2024-12-31 | Hybrid architecture approach | Balance between full functionality and mobile optimization | Manus |
+| 2024-12-31 | Parallel development with 2 tracks | Increase development velocity | Manus |
+| 2025-01-01 | Autonomous Git Worktree management | Eliminate human error in branch management | Manus |
+
+---
+
+## Legend
+
+| Symbol | Meaning |
+|--------|---------|
+| ✅ | Completed |
+| 🟡 | In Progress |
+| ⚪ | Ready to Start |
+| ⏳ | Blocked / Waiting |
+| 🔴 | Error / Needs Attention |
+
+---
+
+## Notes
+
+- This project uses the **Manus × Claude Code collaboration workflow**
+- **Manus** handles orchestration, research, design decisions, and PR reviews
+- **Claude-1** handles Mobile App implementation
+- **Claude-2** handles PC Server implementation
+- All communication happens through this file and the `tasks/` directory

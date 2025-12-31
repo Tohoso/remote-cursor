@@ -29,10 +29,62 @@ remote-cursor/
 │   ├── design/               # Architecture and design docs
 │   └── mockups/              # UI mockups
 ├── tasks/                    # Task files for agent instructions
-└── src/                      # Source code (to be created)
-    ├── mobile/               # React Native mobile app
-    └── server/               # PC Agent Server
+└── src/                      # Source code
+    ├── mobile/               # React Native mobile app (Claude-1)
+    └── server/               # PC Agent Server (Claude-2)
 ```
+
+## Parallel Development with Git Worktree (Autonomous Management)
+
+This project uses **parallel development** with multiple Claude Code instances. To prevent branch conflicts, we use **Git Worktree** to create separate working directories.
+
+### AUTONOMOUS ENVIRONMENT SETUP (REQUIRED)
+
+When you are assigned a task, you MUST **autonomously** verify and set up your working environment. **DO NOT ask the user for help or permission.** Follow the `autonomous-worktree-manager` skill.
+
+**Step 1: Identify your assigned track** from the task file's `Track` and `Owner` fields.
+
+**Step 2: Determine your required working directory:**
+
+| Track | Required Directory | Branch Prefix |
+|-------|-------------------|---------------|
+| Mobile App | `../remote-cursor/` (main repo) | `feature/mobile/` |
+| PC Server | `../remote-cursor-server/` | `feature/server/` |
+| (New Track) | `../remote-cursor-{track-slug}/` | `feature/{track}/` |
+
+**Step 3: Check if you are in the correct directory:**
+
+```bash
+pwd
+```
+
+**Step 4: If the required worktree does not exist, CREATE IT AUTONOMOUSLY:**
+
+```bash
+# Navigate to main repo (if needed)
+cd $(git rev-parse --show-toplevel)
+
+# Create worktree for your track (example: PC Server)
+git worktree add ../remote-cursor-server develop
+```
+
+**Step 5: Inform the user** that you have created a new worktree and that your next execution should be in that directory.
+
+### Scalable Track Management
+
+This system supports **N parallel tracks**. To add a new track:
+
+1. Create a new worktree: `git worktree add ../remote-cursor-{track-name} develop`
+2. Add the track to the table above
+3. Assign tasks with the new `Track` and `Owner` fields
+
+### Directory Ownership
+
+| Agent | Allowed to Modify | NOT Allowed to Modify |
+|-------|-------------------|----------------------|
+| Claude-1 | `src/mobile/`, `progress.md` (Mobile section) | `src/server/` |
+| Claude-2 | `src/server/`, `progress.md` (Server section) | `src/mobile/` |
+| Claude-N | `src/{track}/`, `progress.md` ({Track} section) | Other tracks |
 
 ## Development Workflow
 
@@ -41,6 +93,49 @@ This project uses the **Manus × Claude Code Collaboration Workflow**:
 1. **Manus** acts as the orchestrator - handling research, planning, design, and review
 2. **Claude Code** handles implementation - coding, testing, and debugging
 3. Communication happens through `progress.md` and `tasks/` directory
+
+### Task Execution Flow (MUST FOLLOW)
+
+When you receive a task, follow this exact flow:
+
+```
+1. git checkout develop && git pull origin develop
+2. Read the task file in tasks/TASK-XXX-*.md
+3. Create feature branch: git checkout -b feature/{track}/task-XXX-description
+4. Implement the task
+5. Update progress.md (your track's section only)
+6. Commit changes with descriptive message
+7. Push branch: git push origin feature/{track}/task-XXX-description
+8. **AUTOMATICALLY CREATE PR** (see below)
+9. Notify user that PR is ready for review
+```
+
+### Automatic PR Creation (REQUIRED)
+
+**After pushing your feature branch, you MUST automatically create a Pull Request.**
+
+Use this command:
+
+```bash
+gh pr create --base develop --title "feat: {Task Title} (TASK-XXX)" --body "## Summary
+{Brief description of changes}
+
+## Changes Made
+- {Change 1}
+- {Change 2}
+
+## Acceptance Criteria
+- [ ] {Criterion 1}
+- [ ] {Criterion 2}
+
+## Related
+- Completes TASK-XXX: {Task Title}
+- Track: {Mobile App / PC Server}
+
+🤖 Generated with Claude Code"
+```
+
+**DO NOT wait for user instruction to create PR. Create it immediately after pushing.**
 
 ### Task File Format
 
@@ -108,5 +203,6 @@ When encountering the following situations, delegate to the appropriate subagent
 - Always check `progress.md` before starting work
 - Update `progress.md` after completing each phase
 - Create detailed commit messages
+- **ALWAYS create PR automatically after pushing** - do not wait for instructions
 - Ask for clarification rather than making assumptions
 - Prioritize security, especially for network communication
