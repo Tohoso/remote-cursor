@@ -1,6 +1,7 @@
 import { Server as HttpServer } from 'http';
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import { InstructionHandler } from '../services/instructionHandler';
+import { pushNotificationService } from '../services/pushNotificationService';
 
 export function setupWebSocket(
   server: HttpServer,
@@ -71,6 +72,46 @@ export function setupWebSocket(
           message: 'Internal server error',
           timestamp: new Date().toISOString(),
         });
+      }
+    });
+
+    // Handle push notification token registration
+    socket.on('register_push_token', (data: { token: string }) => {
+      try {
+        if (data && data.token) {
+          pushNotificationService.registerToken(data.token);
+          socket.emit('push_token_registered', {
+            type: 'push_token_registered',
+            success: true,
+            message: 'Push token registered successfully',
+            timestamp: new Date().toISOString(),
+          });
+        } else {
+          socket.emit('error', {
+            type: 'error',
+            message: 'Invalid push token data',
+            timestamp: new Date().toISOString(),
+          });
+        }
+      } catch (error) {
+        console.error('Error registering push token:', error);
+        socket.emit('error', {
+          type: 'error',
+          message: 'Failed to register push token',
+          timestamp: new Date().toISOString(),
+        });
+      }
+    });
+
+    // Handle push notification token unregistration
+    socket.on('unregister_push_token', (data: { token: string }) => {
+      try {
+        if (data && data.token) {
+          pushNotificationService.unregisterToken(data.token);
+          console.log('[WebSocket] Push token unregistered');
+        }
+      } catch (error) {
+        console.error('Error unregistering push token:', error);
       }
     });
 
