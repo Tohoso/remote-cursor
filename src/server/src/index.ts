@@ -22,11 +22,11 @@ const server = createServer(app);
 const projectRoot = path.resolve(__dirname, '../../..');
 const instructionHandler = new InstructionHandler(projectRoot);
 
-// Setup WebSocket server
-const io = setupWebSocket(server, instructionHandler);
-
-// Setup File Watcher for progress.md
+// Setup File Watcher for progress.md (create before WebSocket so it can be passed)
 const fileWatcher = new FileWatcher(projectRoot);
+
+// Setup WebSocket server (pass fileWatcher for initial status on connection)
+const io = setupWebSocket(server, instructionHandler, fileWatcher);
 fileWatcher.start((status, diff) => {
   console.log('Progress file changed, broadcasting updates...');
   const timestamp = new Date().toISOString();

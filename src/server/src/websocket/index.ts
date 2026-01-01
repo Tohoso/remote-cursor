@@ -2,10 +2,12 @@ import { Server as HttpServer } from 'http';
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import { InstructionHandler } from '../services/instructionHandler';
 import { pushNotificationService } from '../services/pushNotificationService';
+import { FileWatcher } from '../services/fileWatcher';
 
 export function setupWebSocket(
   server: HttpServer,
-  instructionHandler: InstructionHandler
+  instructionHandler: InstructionHandler,
+  fileWatcher?: FileWatcher
 ): SocketIOServer {
   const io = new SocketIOServer(server, {
     cors: {
@@ -23,6 +25,21 @@ export function setupWebSocket(
       message: 'Connected to Remote Cursor PC Agent Server',
       timestamp: new Date().toISOString(),
     });
+
+    // Send initial project status on connection
+    if (fileWatcher) {
+      try {
+        const status = fileWatcher.getCurrentStatus();
+        socket.emit('project_status', {
+          type: 'project_status',
+          data: status,
+          timestamp: new Date().toISOString(),
+        });
+        console.log('Sent initial project_status to client:', socket.id);
+      } catch (error) {
+        console.error('Error sending initial project_status:', error);
+      }
+    }
 
     // Handle instruction messages
     socket.on('instruction', async (data: unknown) => {
