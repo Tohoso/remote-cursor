@@ -82,7 +82,7 @@ When completed:
 | TASK-019 | server | WebSocket通信の強化（サーバー） | ✅ Done | TASK-011 |
 | TASK-019-CLIENT | mobile-app | WebSocket通信の強化（クライアント） | ✅ Done | TASK-012, TASK-019 |
 | TASK-020 | mobile-app + server | プッシュ通知の実装 | ✅ Done | TASK-019 |
-| TASK-021 | all | ドキュメントとクリーンアップ | ⚪ Ready | TASK-016, TASK-017, TASK-018 |
+| TASK-021 | all | ドキュメントとクリーンアップ | ✅ Done | TASK-016, TASK-017, TASK-018 |
 
 **Reference Documents**:
 - [Implementation Plan](docs/implementation/IMPLEMENTATION_PLAN.md)
@@ -189,6 +189,12 @@ When completed:
 - **Summary**: Implemented full push notification support for blocker alerts and task updates.
   - **Client-side (mobile-app)**: Created usePushNotifications hook with Expo Notifications. Implemented permission request, push token registration, and notification listeners. Integrated with App.tsx to register token via WebSocket. Added notification tap handlers for navigation. Installed expo-notifications, expo-device, and expo-constants packages.
   - **Server-side (server)**: Created PushNotificationService class using expo-server-sdk. Implemented token registration/unregistration via WebSocket handlers (register_push_token, unregister_push_token). Added sendBlockerAlert() and sendTaskUpdateNotification() methods with chunked message sending and error handling. Integrated push notifications with blocker alert emission in index.ts to automatically send notifications when blockers are detected.
+
+#### TASK-021: ドキュメントとクリーンアップ ✅
+- **Completed**: 2025-01-01
+- **Summary**: Finalized Sprint 2 with documentation updates and code cleanup.
+  - **Server-side (server)**: Created comprehensive `src/server/README.md` documenting all features, WebSocket events, API endpoints, and architecture. Verified TypeScript compilation passes without errors. No unused code or TODO comments found. Updated project root `README.md` with new feature descriptions, screen layouts, and Sprint 2 completion status.
+  - All linting checks passed. Codebase is in a clean, maintainable state ready for production use.
 
 ---
 
