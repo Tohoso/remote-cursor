@@ -12,8 +12,8 @@ Remote Cursorは、Claude Codeによる開発プロセスを可視化し、ブ�
 - 🚨 **ブロッカーアラート**: 問題発生時に即座に通知
 - 📝 **アクティビティログ**: 開発プロセスの詳細なログを表示
 - 📱 **プッシュ通知**: 重要なイベントをモバイルに通知
-- 🎯 **トラック詳細**: 各開発トラックのタスク進捗をタイムライン表示
-- 🔍 **ブロッカー管理**: ブロッカーの詳細確認と解決指示の送信
+- 🎯 **トラック詳細**: 開発トラックごとのタスクタイムライン表示
+- 💬 **指示送信**: ブロッカー解決のための指示をClaude Codeに送信
 
 ## アーキテクチャ
 
@@ -61,38 +61,10 @@ npm install
 npx expo start
 ```
 
-## 画面構成
-
-### ダッシュボード
-
-プロジェクト全体の進捗を一目で確認できます。
-
-- **進捗サマリーカード**: 円形プログレスチャートでタスク完了率を表示
-- **トラックカード**: 各開発トラック（mobile-app, server, common）の状態と最新タスク
-- **ブロッカーアラート**: 検出されたブロッカーを警告バナーで表示
-
-### トラック詳細画面
-
-特定のトラックのタスク一覧をタイムライン形式で表示します。
-
-- トラック情報（名前、ステータス、担当エージェント、進捗率）
-- タスクタイムライン（各タスクのステータスアイコン付き）
-- タップでタスク詳細に遷移
-
-### ブロッカー詳細画面
-
-ブロッカーの詳細情報と解決指示を送信できます。
-
-- ブロッカー情報カード（理由、影響タスク、検出日時）
-- 解決指示フォーム（WebSocket経由でサーバーに送信）
-
-### アクティビティログ画面
-
-リアルタイムで更新されるログストリームを表示します。
-
-- ソース別フィルタリング（claude-1, claude-2, system, websocket）
-- ログレベル別カラーコーディング
-- パフォーマンス最適化されたFlatList
+デバイス選択：
+- **iOS**: `i` キーを押す
+- **Android**: `a` キーを押す
+- **Web**: `w` キーを押す
 
 ## 技術スタック
 
@@ -100,42 +72,17 @@ npx expo start
 - React Native (Expo)
 - TypeScript
 - Zustand (状態管理)
-- React Navigation (ナビゲーション)
-- Socket.IO Client (リアルタイム通信)
-- Expo Notifications (プッシュ通知)
-- Custom Theme System
+- React Navigation
+- Socket.IO Client
+- Expo Notifications
 
 ### Server
 - Node.js
 - Express
-- Socket.IO (WebSocket)
+- Socket.IO
 - TypeScript
 - Chokidar (ファイル監視)
-- Expo Server SDK (プッシュ通知)
-
-### Shared
-- TypeScript 型定義 (`@common/types`)
-- WebSocket イベントスキーマ
-
-## WebSocket イベント
-
-### Server → Client
-
-| Event | Description |
-|:---|:---|
-| `connection_status` | 接続確立通知 |
-| `project_status` | プロジェクト全体の状態配信 |
-| `task_update` | 個別タスクの更新配信 |
-| `blocker_alert` | ブロッカー検出配信 |
-| `log_update` | ログエントリ配信 |
-
-### Client → Server
-
-| Event | Description |
-|:---|:---|
-| `instruction` | ユーザー指示送信 |
-| `register_push_token` | プッシュ通知トークン登録 |
-| `unregister_push_token` | プッシュ通知トークン解除 |
+- expo-server-sdk (プッシュ通知)
 
 ## 開発ワークフロー
 
@@ -144,22 +91,87 @@ npx expo start
 - **Manus**: オーケストレーション、設計、PRレビュー
 - **Claude Code**: 実装、テスト、デバッグ
 
-詳細は [CLAUDE.md](./CLAUDE.md) を参照してください。
+詳細は `CLAUDE.md` を参照してください。
 
-## プロジェクトステータス
+## 主要機能
 
-現在の進捗は [progress.md](./progress.md) で管理されています。
+### ダッシュボード画面
+- プロジェクト全体の進捗サマリー（円形プログレスチャート）
+- 開発トラック一覧と進捗状況
+- ブロッカーアラート表示
 
-**Sprint 2**: UI/UX Overhaul - ✅ 完了
+### トラック詳細画面
+- トラック情報（名前、ステータス、担当エージェント）
+- タスクタイムライン（ステータスアイコン付き）
+
+### ブロッカー詳細画面
+- ブロッカー情報（理由、影響タスク、検出日時）
+- 解決指示送信フォーム
+
+### アクティビティログ画面
+- リアルタイムログストリーム
+- ソース別フィルタリング
+- パフォーマンス最適化
+
+### プッシュ通知
+- ブロッカー検出時の自動通知
+- タスク更新通知
+
+## 環境変数
+
+### サーバー
+
+```env
+PORT=3001
+PROGRESS_FILE_PATH=../../progress.md
+```
+
+### モバイルアプリ
+
+```env
+EXPO_PUBLIC_SOCKET_URL=http://localhost:3001
+```
+
+物理デバイスでテストする場合は、`localhost` をPCのローカルIPアドレスに変更してください。
+
+## ビルドとデプロイ
+
+### モバイルアプリ
+
+```bash
+# EAS Build
+cd src/mobile
+npx eas build --platform ios
+npx eas build --platform android
+```
+
+### サーバー
+
+```bash
+cd src/server
+npm run build
+npm start
+```
+
+## トラブルシューティング
+
+### モバイルアプリが接続できない
+1. サーバーが起動しているか確認
+2. 同じネットワークに接続しているか確認
+3. WebSocket URLが正しいか確認（物理デバイスの場合はIPアドレスを使用）
+
+### プッシュ通知が届かない
+1. 実機でテストしているか確認（シミュレータではプッシュ通知は動作しません）
+2. 通知許可が付与されているか確認
+3. サーバーにプッシュトークンが登録されているか確認
 
 ## ドキュメント
 
-- [Requirements (Japanese)](./docs/requirements/requirements_definition.md)
-- [Architecture Design (Japanese)](./docs/design/architecture_design.md)
-- [Implementation Plan](./docs/implementation/IMPLEMENTATION_PLAN.md)
-- [Wireframe Specification](./docs/implementation/WIREFRAME_SPEC.md)
-- [Mobile App README](./src/mobile/README.md)
-- [Server README](./src/server/README.md)
+- [モバイルアプリREADME](./src/mobile/README.md)
+- [サーバーREADME](./src/server/README.md)
+- [進捗管理](./progress.md)
+- [設計ドキュメント](./docs/design/)
+- [要件定義](./docs/requirements/)
 
 ## ライセンス
 
@@ -167,8 +179,4 @@ MIT
 
 ## サポート
 
-問題や質問がある場合は、GitHubでissueを作成してください。
-
----
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+問題や質問がある場合は、GitHubのIssueを作成してください。
