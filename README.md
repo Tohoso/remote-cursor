@@ -1,266 +1,182 @@
 # Remote Cursor
 
-A mobile application that enables developers to monitor and control their Cursor/VSCode development environment from a smartphone.
+Claude Code開発プロセスをリアルタイムで監視するモバイルアプリケーションとサーバー。
 
-## Features
+## 概要
 
-- **Real-time Dashboard**: Monitor active projects and view live logs from your development environment
-- **Remote Instructions**: Send commands to your PC Agent from your mobile device
-- **WebSocket Integration**: Real-time bidirectional communication between mobile app and PC
-- **Dark Theme**: Optimized UI for comfortable viewing
+Remote Cursorは、Claude Codeによる開発プロセスを可視化し、ブロッカーの早期検出と解決を支援するツールです。
 
-## Architecture
+## 機能
 
-This project uses a hybrid architecture:
-- **Mobile App**: React Native (Expo) with TypeScript and NativeWind (TailwindCSS)
-- **PC Agent Server**: Node.js with Express, WebSocket (Socket.io), and file watching
-- **Communication**: WebSocket for real-time updates and command transmission
+- 📊 **リアルタイム進捗監視**: タスクの進捗状況をリアルタイムで表示
+- 🚨 **ブロッカーアラート**: 問題発生時に即座に通知
+- 📝 **アクティビティログ**: 開発プロセスの詳細なログを表示
+- 📱 **プッシュ通知**: 重要なイベントをモバイルに通知
+- 🎯 **トラック詳細**: 開発トラックごとのタスクタイムライン表示
+- 💬 **指示送信**: ブロッカー解決のための指示をClaude Codeに送信
 
-## Prerequisites
+## アーキテクチャ
 
-### PC Agent Server
-- Node.js v18+
-- npm or yarn
-
-### Mobile App
-- Node.js v18+
-- npm or yarn
-- Expo CLI
-- iOS Simulator (Mac) or Android Emulator, or physical device with Expo Go app
-
-## Installation
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/Tohoso/remote-cursor.git
-cd remote-cursor
+```
+┌─────────────────┐     WebSocket      ┌─────────────────┐
+│   Mobile App    │◄──────────────────►│     Server      │
+│  (React Native) │                    │   (Node.js)     │
+└─────────────────┘                    └────────┬────────┘
+                                                │
+                                                │ File Watch
+                                                ▼
+                                       ┌─────────────────┐
+                                       │  progress.md    │
+                                       └─────────────────┘
 ```
 
-### 2. Install PC Agent Server
-
-```bash
-cd src/server
-npm install
-npm run build
-```
-
-### 3. Install Mobile App
-
-```bash
-cd ../mobile
-npm install
-```
-
-## Running the System
-
-### Step 1: Start the PC Agent Server
-
-```bash
-cd src/server
-npm start
-```
-
-You should see:
-```
-==================================================
-Remote Cursor PC Agent Server
-==================================================
-HTTP Server: http://localhost:3001
-WebSocket Server: ws://localhost:3001
-Project Root: /Users/your-username/Projects/remote-cursor
-==================================================
-```
-
-### Step 2: Start the Mobile App
-
-In a new terminal:
-
-```bash
-cd src/mobile
-npx expo start
-```
-
-Options:
-- Press `i` for iOS Simulator
-- Press `a` for Android Emulator
-- Scan QR code with Expo Go app on physical device
-
-## Project Status
-
-**Status**: ✅ **Completed**
-
-Development and end-to-end (E2E) testing of the Remote Cursor application are now complete. All core features have been implemented and verified.
-
-For detailed test results, please see the [E2E Test Report](./E2E_Test_Report.md).
-
----
-
-## E2E Testing Scenario
-
-Follow these steps to verify the complete end-to-end workflow:
-
-### 1. Verify Server is Running
-- PC Agent Server should be running on `http://localhost:3001`
-- Check the terminal for server startup messages
-
-### 2. Launch Mobile App
-- Start the mobile app using Expo
-- The app should automatically attempt to connect to `localhost:3001`
-
-### 3. Check Dashboard Connection
-- Open the **Dashboard** tab
-- Connection status should show **"Connected"** with a green indicator
-- If showing "Connecting..." or "Disconnected", verify server is running
-
-### 4. Test Real-time Updates
-- On your PC, modify the `progress.md` file in the project root
-- The Dashboard should update in real-time showing the changes
-- Logs should appear in the "Real-time Logs" section
-
-### 5. Send an Instruction
-- Open the **Instruction** tab in the mobile app
-- Type a test instruction (e.g., "Create a new React component called Button")
-- Press **"Send Instruction"**
-- The input field should clear after sending
-
-### 6. Verify Task File Creation
-- On your PC, check the `tasks/` directory
-- A new task file should be created with a timestamp-based filename
-- The file should contain your instruction
-
-### 7. Check Confirmation
-- The mobile app should receive a confirmation via WebSocket
-- Check the Dashboard logs for the instruction event
-
-## Project Structure
+## ディレクトリ構造
 
 ```
 remote-cursor/
 ├── src/
-│   ├── mobile/              # React Native mobile app
-│   │   ├── app/
-│   │   │   └── screens/     # Screen components
-│   │   ├── components/      # Reusable UI components
-│   │   ├── hooks/           # Custom React hooks
-│   │   ├── navigation/      # Navigation setup
-│   │   ├── stores/          # State management (Zustand)
-│   │   └── data/            # Mock data and types
-│   │
-│   └── server/              # PC Agent Server
-│       ├── src/
-│       │   ├── config/      # Configuration
-│       │   ├── routes/      # HTTP routes
-│       │   ├── services/    # Business logic
-│       │   └── websocket/   # WebSocket handlers
-│       └── dist/            # Compiled JavaScript
-│
-├── tasks/                   # Task files
-├── docs/                    # Documentation
-└── progress.md              # Development progress tracking
+│   ├── mobile/         # React Native アプリ
+│   ├── server/         # Node.js サーバー
+│   └── common/         # 共有型定義
+├── docs/               # ドキュメント
+├── tasks/              # タスク管理
+└── progress.md         # 進捗管理ファイル
 ```
 
-## Configuration
+## セットアップ
 
-### Server Configuration
-
-Create a `.env` file in `src/server/`:
-
-```env
-PORT=3001
-PROJECT_ROOT=/path/to/your/remote-cursor
-WATCH_PATHS=progress.md,tasks
-LOG_LEVEL=info
-```
-
-### Mobile App Configuration
-
-WebSocket URL is configured in `src/mobile/hooks/useWebSocket.ts`:
-
-```typescript
-const SOCKET_URL = 'http://localhost:3001';
-```
-
-For physical devices, replace `localhost` with your PC's local IP address.
-
-## Troubleshooting
-
-### Mobile App Cannot Connect
-
-1. **Check server is running**: Verify the PC Agent Server is running on port 3001
-2. **Check network**: Ensure mobile device and PC are on the same network
-3. **Update WebSocket URL**: If using a physical device, update `SOCKET_URL` to your PC's IP address
-4. **Firewall**: Ensure port 3001 is not blocked by your firewall
-
-### Server Not Starting
-
-1. **Build TypeScript**: Run `npm run build` in `src/server/`
-2. **Check dependencies**: Run `npm install` in `src/server/`
-3. **Port conflict**: Ensure port 3001 is not already in use
-
-### Real-time Updates Not Working
-
-1. **Verify connection**: Check Dashboard shows "Connected" status
-2. **Check file watcher**: Ensure `progress.md` exists in project root
-3. **Check server logs**: Look for file change events in server terminal
-
-## Development
-
-### Mobile App Development
-
-```bash
-cd src/mobile
-npx expo start
-```
-
-Hot reload is enabled by default.
-
-### Server Development
+### サーバー
 
 ```bash
 cd src/server
-npm run dev  # Uses nodemon for auto-restart
+npm install
+npm run dev
 ```
 
-## Technologies Used
+### モバイルアプリ
+
+```bash
+cd src/mobile
+npm install
+npx expo start
+```
+
+デバイス選択：
+- **iOS**: `i` キーを押す
+- **Android**: `a` キーを押す
+- **Web**: `w` キーを押す
+
+## 技術スタック
 
 ### Mobile App
-- React Native
-- Expo
+- React Native (Expo)
 - TypeScript
-- NativeWind (TailwindCSS)
-- Socket.io-client
-- Zustand (state management)
+- Zustand (状態管理)
 - React Navigation
+- Socket.IO Client
+- Expo Notifications
 
-### PC Server
+### Server
 - Node.js
 - Express
-- Socket.io
+- Socket.IO
 - TypeScript
-- Chokidar (file watching)
+- Chokidar (ファイル監視)
+- expo-server-sdk (プッシュ通知)
 
-## Contributing
+## 開発ワークフロー
 
-This project follows the **Manus × Claude Code Collaboration Workflow**. See `CLAUDE.md` for development guidelines.
+このプロジェクトは **Manus × Claude Code** コラボレーションワークフローを使用しています。
 
-## License
+- **Manus**: オーケストレーション、設計、PRレビュー
+- **Claude Code**: 実装、テスト、デバッグ
+
+詳細は `CLAUDE.md` を参照してください。
+
+## 主要機能
+
+### ダッシュボード画面
+- プロジェクト全体の進捗サマリー（円形プログレスチャート）
+- 開発トラック一覧と進捗状況
+- ブロッカーアラート表示
+
+### トラック詳細画面
+- トラック情報（名前、ステータス、担当エージェント）
+- タスクタイムライン（ステータスアイコン付き）
+
+### ブロッカー詳細画面
+- ブロッカー情報（理由、影響タスク、検出日時）
+- 解決指示送信フォーム
+
+### アクティビティログ画面
+- リアルタイムログストリーム
+- ソース別フィルタリング
+- パフォーマンス最適化
+
+### プッシュ通知
+- ブロッカー検出時の自動通知
+- タスク更新通知
+
+## 環境変数
+
+### サーバー
+
+```env
+PORT=3001
+PROGRESS_FILE_PATH=../../progress.md
+```
+
+### モバイルアプリ
+
+```env
+EXPO_PUBLIC_SOCKET_URL=http://localhost:3001
+```
+
+物理デバイスでテストする場合は、`localhost` をPCのローカルIPアドレスに変更してください。
+
+## ビルドとデプロイ
+
+### モバイルアプリ
+
+```bash
+# EAS Build
+cd src/mobile
+npx eas build --platform ios
+npx eas build --platform android
+```
+
+### サーバー
+
+```bash
+cd src/server
+npm run build
+npm start
+```
+
+## トラブルシューティング
+
+### モバイルアプリが接続できない
+1. サーバーが起動しているか確認
+2. 同じネットワークに接続しているか確認
+3. WebSocket URLが正しいか確認（物理デバイスの場合はIPアドレスを使用）
+
+### プッシュ通知が届かない
+1. 実機でテストしているか確認（シミュレータではプッシュ通知は動作しません）
+2. 通知許可が付与されているか確認
+3. サーバーにプッシュトークンが登録されているか確認
+
+## ドキュメント
+
+- [モバイルアプリREADME](./src/mobile/README.md)
+- [サーバーREADME](./src/server/README.md)
+- [進捗管理](./progress.md)
+- [設計ドキュメント](./docs/design/)
+- [要件定義](./docs/requirements/)
+
+## ライセンス
 
 MIT
 
-## Support
+## サポート
 
-For issues and questions, please create an issue on GitHub.
-
----
-
-## Development Progress
-
-Current progress is tracked in [progress.md](./progress.md).
-
-## Documentation
-
-- [Requirements (Japanese)](./docs/requirements/requirements_definition.md)
-- [Architecture Design (Japanese)](./docs/design/architecture_design.md)
-- [E2E Test Report](./E2E_Test_Report.md)
-- [UI Mockups](./docs/mockups/)
+問題や質問がある場合は、GitHubのIssueを作成してください。
